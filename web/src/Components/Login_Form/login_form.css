@@ -1,0 +1,48 @@
+.login_title {
+    font-size: 30px;
+    text-align: center;
+    color: var(--color-white);
+    font-family: "Inder", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 30px 0;
+}
+
+.login_inputs {
+    color: var(--color-white);
+    background-color: transparent;
+    width: 250px;
+    padding: 3px 5px;
+    margin: 30px 0;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid var(--color-primary);
+}
+
+.login_button {
+    color: var(--color-white);
+    background-color: var(--color-black);
+    width: 250px;
+    padding: 10px 0;
+    margin: 35px 0;
+    text-align: center;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.signup_prompt {
+    font-size: 14px;
+    color: var(--color-white);
+    text-align: center;
+}
+
+.signup_prompt > span {
+    font-size: 15px;
+    color: var(--color-primary);
+    font-weight: 600;
+    cursor: pointer;
+}

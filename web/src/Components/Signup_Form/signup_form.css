@@ -1,8 +1,8 @@
-.signup_form {
+.form {
     position: relative;
 }
 
-.form_title {
+.signup_title {
     font-size: 30px;
     text-align: center;
     color: var(--color-white);
