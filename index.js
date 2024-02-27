@@ -1,20 +1,24 @@
-const express = require('express')
-const dotenv = require('dotenv');
-const path = require('path');
+import express from 'express';
+import dotenv from 'dotenv';
+import * as path  from 'path';
+import router from './routes/index.js';
+import { getGlobals } from 'common-es'
+const { __dirname } = getGlobals(import.meta.url)
 
 const app = express()
 
 dotenv.config()
 const port = process.env.PORT
 
-app.use(express.static(path.resolve(__dirname, './web/build')));
+app.use(express.json());
+app.use(express.static('./web/build'));
 
-app.get('/api', (req, res) => {
-  res.json({message: 'Hello World!'})
-})
+app.use("/api", router);
+
+console.log(__dirname);
 
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, './web/build', 'index.html'));
+    res.sendFile(__dirname + '/web/build', 'index.html');
 });
 
 app.listen(port, () => {

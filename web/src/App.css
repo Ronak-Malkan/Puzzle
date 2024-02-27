@@ -1,0 +1,16 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+ 
+body {
+    overflow-x: hidden;
+}
+
+html {
+    --color-black: #18191A;
+    --color-light-black: #242526;
+    --color-primary: #E26310;
+    --color-white: #FFFFFF;
+}

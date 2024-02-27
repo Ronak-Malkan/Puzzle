@@ -1,0 +1,63 @@
+POST  http://localhost:8081/api/user/signup
+Content-Type: application/json
+
+{
+    "firstName": "Ronak",
+    "lastName": "Malkan",
+    "email": "ronak@gmail.com",
+    "password": "Rons@123"
+}
+
+###
+
+POST  http://localhost:8081/api/user/signup
+Content-Type: application/json
+
+{
+    "firstName": "Ronak",
+    "lastName": "Malkan",
+    "email": "ronak@gmailcom",
+    "password": "Rons@123"
+} 
+
+###
+
+POST  http://localhost:8081/api/user/signup
+Content-Type: application/json
+
+{
+    "firstName": "Ronak",
+    "lastName": "Malkan",
+    "email": "ronak2@gmail.com",
+    "password": "rons@123"
+} 
+
+###
+
+POST  http://localhost:8081/api/user/login
+Content-Type: application/json
+
+{
+    "email": "ronak@gmail.com",
+    "password": "Rons@123"
+}
+
+### 
+
+POST  http://localhost:8081/api/user/login
+Content-Type: application/json
+
+{
+    "email": "rona@gmail.com",
+    "password": "Rons@123"
+}
+
+### 
+
+POST  http://localhost:8081/api/user/login
+Content-Type: application/json
+
+{
+    "email": "ronak@gmail.com",
+    "password": "Ron@123"
+}

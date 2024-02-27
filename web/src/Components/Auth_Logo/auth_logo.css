@@ -1,0 +1,23 @@
+.auth-logo-container {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: var(--color-black);
+    clip-path: polygon(0 0, 100% 0%, 90% 100%, 0% 100%);
+}
+
+.auth-logo-container > div > img {
+    height: 200px;
+}
+
+.Puzzle {
+    font-size: 65px;
+    text-align: center;
+    font-family: "Gloria Hallelujah", cursive;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--color-white);
+
+}
