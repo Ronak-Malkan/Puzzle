@@ -53,6 +53,7 @@
 
 .error_message {
     font-size: 14px;
+    font-weight: 500;
     width: 300px;
     color: var(--color-primary);
     text-align: center;

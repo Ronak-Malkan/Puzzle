@@ -27,6 +27,7 @@ export async function login({email, password}){
         const passwordCorrect = await bcrypt.compare(password, res.password.toString());
         if(!passwordCorrect) throw new Error("Incorrect password.");
         return {
+            message: 'User logged in.',
             firstname: res.firstname,
             lastname: res.lastname,
             token: jwt.sign({ id: res.id }, process.env.JWT_SECRET , { expiresIn: '1d'})

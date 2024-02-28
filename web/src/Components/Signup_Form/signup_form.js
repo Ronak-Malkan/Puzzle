@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import "./signup_form.css";
 
@@ -17,6 +16,30 @@ const Signup_Form = ({setDisplay}) => {
             setTimeout(() => setMessage(''), 3000);
             return;
         }
+        let sendData = {
+            firstname: firstName,
+            lastname: lastName,
+            email,
+            password
+        }
+        fetch('/api/user/signup', {
+            method: 'POST',
+            headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(sendData)
+         })
+         .then(res => res.json())
+         .then(data => {
+            if(data.message === 'User signed up') {
+                setTimeout(() => setDisplay(true), 500);
+                return;
+            }
+            setMessage(data.message)
+            setTimeout(() => setMessage(''), 4000);
+            return;
+         })
     }
 
    return (

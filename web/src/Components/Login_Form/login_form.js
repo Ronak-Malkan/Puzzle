@@ -8,6 +8,7 @@ const Login_Form = ({setDisplay}) => {
     const [message, setMessage] = useState();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const loginHandler = (e) => {
         e.preventDefault();
@@ -16,6 +17,30 @@ const Login_Form = ({setDisplay}) => {
             setTimeout(() => setMessage(''), 3000)
             return;
         }
+        const sendData = {
+            email,
+            password
+        }
+        fetch('/api/user/login', {
+            method: 'POST',
+            headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(sendData)
+         })
+         .then(res => res.json())
+         .then(data => {
+            if(data.message === 'User logged in.') {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('username', `${data.firstname} ${data.lastname}`)
+                setTimeout(() => navigate("/home"), 500);
+                return;
+            }
+            setMessage(data.message)
+            setTimeout(() => setMessage(''), 4000);
+            return;
+         })
     }
 
    return (
