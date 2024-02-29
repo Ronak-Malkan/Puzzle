@@ -1,5 +1,6 @@
 import * as express from 'express'
-import {userRouter} from "./userRouter.js"
+import {userRouter} from "./userRouter.js";
+import { blockRouter } from './blockRouter.js';
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv"
 
@@ -27,7 +28,7 @@ export async function checkToken(req, res, next) {
             user = null;
         }
         if(user !== null){
-            user = jwt.verify(token, process.env.JWT_SECRET);
+            user = jwt.verify(token, process.env.JWT_SECRET).id;
             req.body.user = user;
             next();
         }
@@ -44,5 +45,7 @@ export async function checkToken(req, res, next) {
 router.use('/user', userRouter);
 
 router.use(checkToken);
+
+router.use('/block', blockRouter);
 
 export default router;

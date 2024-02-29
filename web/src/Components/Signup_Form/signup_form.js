@@ -11,7 +11,7 @@ const Signup_Form = ({setDisplay}) => {
 
     const signUpHandler = (e) => {
         e.preventDefault();
-        if(firstName == '' || lastName == '' || email == '' || password == '') {
+        if(firstName === '' || lastName === '' || email === '' || password === '') {
             setMessage("Please fill all the fields.")
             setTimeout(() => setMessage(''), 3000);
             return;

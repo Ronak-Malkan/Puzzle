@@ -12,7 +12,7 @@ const Login_Form = ({setDisplay}) => {
 
     const loginHandler = (e) => {
         e.preventDefault();
-        if(email == '' || password == '') {
+        if(email === '' || password === '') {
             setMessage("Please fill all the fields.")
             setTimeout(() => setMessage(''), 3000)
             return;

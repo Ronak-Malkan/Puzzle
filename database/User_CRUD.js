@@ -14,7 +14,7 @@ const GET_USER_WITH_EMAIL_QUERY = 'SELECT * FROM users WHERE email=$1;'
 
 export async function createUser(user){
     user.id = uuidv4();
-    const res = pool.query(CREATE_USER_QUERY, [user.id, user.firstname, user.lastname, user.email, user.password]);
+    const res = await pool.query(CREATE_USER_QUERY, [user.id, user.firstname, user.lastname, user.email, user.password]);
 }
 
 export async function getUserByEmail(email){

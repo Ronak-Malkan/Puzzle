@@ -61,3 +61,49 @@ Content-Type: application/json
     "email": "ronak@gmail.com",
     "password": "Ron@123"
 }
+
+###
+
+POST  http://localhost:8081/api/block/create
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiODc1YzIzLTIxNzEtNDE1OS1hYTRiLTJkN2Y0NTExNDQ4ZCIsImlhdCI6MTcwOTE5MDQ3MSwiZXhwIjoxNzA5Mjc2ODcxfQ.a5PjknGr49p7QnfgA1Lis0BfzUe_q2-Txgzt8xLICVE
+
+{
+    "block_type": "page",
+    "position": 0,
+    "parent": null,
+    "properties": true,
+    "children": false,
+    "propertiesList": [
+        {
+            "property_name": "title",
+            "value": "Untitled"
+        }
+    ]
+}
+
+###
+
+POST  http://localhost:8081/api/block/update
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiODc1YzIzLTIxNzEtNDE1OS1hYTRiLTJkN2Y0NTExNDQ4ZCIsImlhdCI6MTcwOTE5MDQ3MSwiZXhwIjoxNzA5Mjc2ODcxfQ.a5PjknGr49p7QnfgA1Lis0BfzUe_q2-Txgzt8xLICVE
+
+{
+    "id": "0ee53108-d999-4228-92cc-625e08ac5ff3",
+    "block_type": "page",
+    "position": 0,
+    "parent": null,
+    "properties": true,
+    "children": false,
+    "propertiesList": [
+        {
+            "property_name": "title",
+            "value": "Awesome!"
+        }
+    ]
+}
+
+### 
+
+GET http://localhost:8081/api/block/pages
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiODc1YzIzLTIxNzEtNDE1OS1hYTRiLTJkN2Y0NTExNDQ4ZCIsImlhdCI6MTcwOTE5MDQ3MSwiZXhwIjoxNzA5Mjc2ODcxfQ.a5PjknGr49p7QnfgA1Lis0BfzUe_q2-Txgzt8xLICVE
