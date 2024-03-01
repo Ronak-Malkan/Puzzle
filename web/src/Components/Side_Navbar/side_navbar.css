@@ -1,0 +1,32 @@
+.side-navbar-container {
+    display: inline-block;
+    grid-row: span 2;
+    height: 100vh;
+    background-color: var(--color-light-black);
+}
+
+.name {
+    padding-left: 30px;
+    color: var(--color-primary);
+    font-size: 24px;
+    font-family: "Play", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin-top: 25px;
+}
+
+.add-new-page {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    color: var(--color-white);
+    padding: 10px 0;
+    padding-left: 30px;
+    margin-top: 35px;
+    align-self: center;
+    cursor: pointer;
+}
+
+.add-new-page:hover {
+    background-color: var(--color-black);
+}

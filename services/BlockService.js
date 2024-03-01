@@ -29,3 +29,13 @@ export async function getAllPages(userId) {
         throw err;
     }
 }
+
+export async function getAllBlocks(pageId) {
+    try {
+        console.log("Block Service: ", pageId);
+        const blocks = await Block_CRUD.getBlocks(pageId);
+        return blocks;
+    }catch (err) {
+        throw err;
+    }
+}

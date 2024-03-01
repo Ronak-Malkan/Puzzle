@@ -1,0 +1,31 @@
+.top-navbar-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-black);
+    height: 60px;
+    border: none;
+    outline: none;
+}
+
+.page-name {
+    color: var(--color-white);
+    justify-self: center;
+    font-size: 26px;
+    font-family: "Play", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.logout {
+    justify-self: end;
+    align-self: center;
+    margin-right: 25px;
+    cursor: pointer;
+}
+
+.nav-bar-arrow {
+    margin-left: 15px;
+    cursor: pointer;
+}

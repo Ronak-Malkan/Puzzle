@@ -22,6 +22,7 @@ export async function signup(user){
 
 export async function login({email, password}){
     try {
+        console.log('2');
         const res = await User_CRUD.getUserByEmail(email);
         if(res == null) throw new Error("Email doesn't exist.");
         const passwordCorrect = await bcrypt.compare(password, res.password.toString());

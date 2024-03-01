@@ -15,6 +15,7 @@ const UPDATE_BLOCK_QUERY = 'UPDATE blocks SET block_type=$1, position=$2, parent
 const GET_BLOCK_QUERY = 'SELECT * FROM blocks WHERE id=$1;';
 const GET_PROPERTIES_QUERY = 'SELECT * FROM properties WHERE blockid=$1;';
 const GET_PAGES_QUERY = 'SELECT * FROM blocks WHERE block_type=$1 AND userid=$2;';
+const GET_BLOCKS_QUERY = 'SELECT * FROM blocks WHERE parent=$1 ORDER BY position';
 
 
 export async function insertBlock(block) {
@@ -54,6 +55,18 @@ export async function getAllPageBlocks(userId) {
         pageList.push(page);
     }
     return pageList;
+}
+
+export async function getBlocks(pageId) {
+    console.log("Page Id: ", pageId);
+    let blocks = await pool.query(GET_BLOCKS_QUERY, [pageId]);
+    blocks = blocks.rows;
+    let blockList = []
+    for(const block of blocks) {
+        block.propertiesList = await getProperties(block.id);
+        blockList.push(block);
+    }
+    return blockList;
 }
 
 

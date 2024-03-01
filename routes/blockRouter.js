@@ -31,5 +31,14 @@ blockRouter.get("/pages", async (req, res) => {
     }
 })
 
+blockRouter.get("/blocks/:pageId", async (req, res) => {
+    try {
+        const blocks = await BlockService.getAllBlocks(req.params.pageId);
+        res.status(201).json({blocks, message: 'blocks retrieved'});
+    }catch (err) {
+        res.status(500).json({error: err.message, message: 'Internal Server Error'});
+    }
+})
+
 
 export {blockRouter};
