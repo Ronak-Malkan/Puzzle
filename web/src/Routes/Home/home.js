@@ -8,6 +8,7 @@ import "./home.css";
 const Home = () => {
    const [showSideNavBar, setShow] = useState(true);
    const [className, setClassName] = useState();
+   const [selectPage, setPage] = useState('');
 
    useEffect(()=> {
       if(showSideNavBar) {
@@ -20,7 +21,7 @@ const Home = () => {
 
    return (
       <div className={className}>
-         <SideNavbar showSideNavBar={showSideNavBar}/>
+         <SideNavbar showSideNavBar={showSideNavBar} selectPage={selectPage} setPage={setPage}/>
          <TopNavbar showSideNavBar={showSideNavBar} setShow={setShow} />
          <PageDisplay/>
       </div>
