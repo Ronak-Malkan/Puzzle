@@ -132,3 +132,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiODc1YzIzL
 
 GET http://localhost:8081/api/block/blocks/0ee53108-d999-4228-92cc-625e08ac5ff3
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiODc1YzIzLTIxNzEtNDE1OS1hYTRiLTJkN2Y0NTExNDQ4ZCIsImlhdCI6MTcwOTE5MDQ3MSwiZXhwIjoxNzA5Mjc2ODcxfQ.a5PjknGr49p7QnfgA1Lis0BfzUe_q2-Txgzt8xLICVE
+
+###
+
+DELETE   http://localhost:8081/api/block/delete
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiODc1YzIzLTIxNzEtNDE1OS1hYTRiLTJkN2Y0NTExNDQ4ZCIsImlhdCI6MTcwOTQ1MDY3MCwiZXhwIjoxNzA5NTM3MDcwfQ.hQa9bpoP1o7bvXe6-cNklIhSW0iKBfKHlkZbYNE7b20
+
+{
+    "blockId": "0ee53108-d999-4228-92cc-625e08ac5ff3"
+}

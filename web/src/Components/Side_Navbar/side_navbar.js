@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ReactComponent as Plus } from "../../Utils/Plus.svg";
 import { ReactComponent as Page } from "../../Utils/page.svg";
+import { ReactComponent as Delete } from "../../Utils/Delete.svg";
 
 import "./side_navbar.css";
 
@@ -90,8 +91,55 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage}) => {
     }
 
     const handlePageClick = (e) => {
-        console.log(e.target.dataset.pageid);
-        setPage(e.target.dataset.pageid);
+        if(e.target.dataset.pageid !== undefined){
+            setPage(e.target.dataset.pageid);
+        }
+        else {
+            setPage(e.target.parentNode.dataset.pageid);
+        }
+    }
+
+    const deletePage = (e) => {
+        e.stopPropagation();
+        if(e.target.dataset.pageid !== undefined){
+            fetch(`api/block/delete`, {
+                method: 'DELETE',
+                headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({blockId: e.target.dataset.pageid})
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.message === 'block deleted') {
+                   console.log('page deleted');
+                }else {
+                    console.log(res.error);
+                }
+            })    
+        }
+        else {
+            fetch(`api/block/delete`, {
+                method: 'DELETE',
+                headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({blockId: e.target.parentNode.dataset.pageid})
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.message === 'block deleted') {
+                   console.log('page deleted');
+                }else {
+                    console.log(res.error);
+                }
+            })
+        }
+
     }
 
     return (
@@ -113,9 +161,12 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage}) => {
                             }
                             return (
                                 <div onClick={handlePageClick} className={provideClassName(page.id)} key={page.id} data-pageid={`${page.id}`}>
-                                    <Page/>
-                                    &nbsp;&nbsp;
-                                    {title}
+                                    <div className="pagelogo-id-container">
+                                        <Page data-pageid={`${page.id}`}/>
+                                        &nbsp;&nbsp;
+                                        {title}
+                                    </div>
+                                    <Delete onClick={deletePage} data-pageid={`${page.id}`} className="delete-icon" />
                                 </div>
                             );
                         })}

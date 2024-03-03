@@ -32,10 +32,17 @@ export async function getAllPages(userId) {
 
 export async function getAllBlocks(pageId) {
     try {
-        console.log("Block Service: ", pageId);
         const blocks = await Block_CRUD.getBlocks(pageId);
         return blocks;
     }catch (err) {
+        throw err;
+    }
+}
+
+export async function delBlock(blockId) {
+    try {
+        await Block_CRUD.deleteBlock(blockId);
+    }catch(err){
         throw err;
     }
 }

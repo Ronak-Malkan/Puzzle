@@ -40,5 +40,14 @@ blockRouter.get("/blocks/:pageId", async (req, res) => {
     }
 })
 
+blockRouter.delete("/delete", async (req, res) => {
+    try {
+        await BlockService.delBlock(req.body.blockId);
+        res.status(200).json({message: 'block deleted'});
+    }catch (err) {
+        res.status(500).json({error: err.message, message: 'Internal Server Error'});
+    }
+})
+
 
 export {blockRouter};
