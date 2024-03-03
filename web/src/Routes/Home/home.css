@@ -3,7 +3,6 @@
     grid-template-rows: 60px auto;
     width: 100%;
     height: 100vh;
-    transition: all 0.2s ease-in-out;
 }
 
 .hide-side-navbar {
@@ -11,5 +10,5 @@
 }
 
 .show-side-navbar {
-    grid-template-columns: 3fr 10fr;
+    grid-template-columns: 300px 1fr;
 }

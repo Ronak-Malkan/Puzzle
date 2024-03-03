@@ -30,7 +30,6 @@ userRouter.post("/signup", async (req, res) => {
 
 userRouter.post("/login", async (req, res) => {
     try {
-        console.log('1');
         const loginDetails = await UserService.login(req.body);
         res.status(201).json(loginDetails);
         return;

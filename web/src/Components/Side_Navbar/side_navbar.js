@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { ReactComponent as Plus } from "../../Utils/Plus.svg";
 import { ReactComponent as Page } from "../../Utils/page.svg";
 import { ReactComponent as Delete } from "../../Utils/Delete.svg";
+import { ReactComponent as Settings } from "../../Utils/Settings.svg";
 
 import "./side_navbar.css";
 
 
-const SideNavbar = ({showSideNavBar, selectPage, setPage}) => {
+const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName}) => {
     const [name, setName] = useState('');
     const [token, setToken] = useState('');
     const [pageList, setPageList] = useState([]);
@@ -73,7 +74,7 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage}) => {
                     pageData.id = res.id;
                     let pages = pageList;
                     pages.push(pageData);
-                    setPageList(pages);
+                    setPageList([...pages]);
                 }else {
                     console.log(res.error);
                 }
@@ -83,9 +84,11 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage}) => {
 
     const provideClassName = (pageId) => {
         if(pageId === selectPage) {
-            return 'page-item selected-page';
+            if(pageId === 'settingsSelected') return 'settings selected'
+            return 'page-item selected';
         }
         else {
+            if(pageId === 'settingsSelected') return 'settings'
             return 'page-item';
         }
     }
@@ -93,53 +96,47 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage}) => {
     const handlePageClick = (e) => {
         if(e.target.dataset.pageid !== undefined){
             setPage(e.target.dataset.pageid);
+            setPageName(e.target.dataset.title);
         }
         else {
             setPage(e.target.parentNode.dataset.pageid);
+            setPageName(e.target.parentNode.dataset.title);
         }
     }
 
     const deletePage = (e) => {
         e.stopPropagation();
+        let pageId;
         if(e.target.dataset.pageid !== undefined){
-            fetch(`api/block/delete`, {
-                method: 'DELETE',
-                headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({blockId: e.target.dataset.pageid})
-            })
-            .then(res => res.json())
-            .then(res => {
-                if(res.message === 'block deleted') {
-                   console.log('page deleted');
-                }else {
-                    console.log(res.error);
-                }
-            })    
+            pageId = e.target.dataset.pageid;  
         }
         else {
-            fetch(`api/block/delete`, {
-                method: 'DELETE',
-                headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({blockId: e.target.parentNode.dataset.pageid})
-            })
-            .then(res => res.json())
-            .then(res => {
-                if(res.message === 'block deleted') {
-                   console.log('page deleted');
-                }else {
-                    console.log(res.error);
-                }
-            })
+            pageId = e.target.parentNode.dataset.pageid;
         }
+        fetch(`api/block/delete`, {
+            method: 'DELETE',
+            headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({blockId: pageId})
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.message === 'block deleted') {
+               const updatedList = pageList.filter((page) => page.id !== pageId);
+               setPageList([...updatedList]);
+            }else {
+                console.log(res.error);
+            }
+        })  
 
+    }
+
+    const openSettings = () => {
+        setPage('settingsSelected');
+        setPageName('Settings');
     }
 
     return (
@@ -160,16 +157,20 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage}) => {
                                 if(property.property_name === 'title') title = property.value;
                             }
                             return (
-                                <div onClick={handlePageClick} className={provideClassName(page.id)} key={page.id} data-pageid={`${page.id}`}>
+                                <div onClick={handlePageClick} className={provideClassName(page.id)} key={page.id} data-title={title} data-pageid={`${page.id}`}>
                                     <div className="pagelogo-id-container">
-                                        <Page data-pageid={`${page.id}`}/>
+                                        <Page data-title={title} data-pageid={`${page.id}`}/>
                                         &nbsp;&nbsp;
                                         {title}
                                     </div>
-                                    <Delete onClick={deletePage} data-pageid={`${page.id}`} className="delete-icon" />
+                                    <Delete onClick={deletePage} data-title={title} data-pageid={`${page.id}`} className="delete-icon" />
                                 </div>
                             );
                         })}
+                        <div className={provideClassName('settingsSelected')} onClick={openSettings}>
+                            <Settings/>&nbsp;
+                            Settings
+                        </div>
                     </div>
                 </div>
             }           

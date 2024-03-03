@@ -43,7 +43,7 @@
     font-size: 16px;
     color: var(--color-white);
     padding: 10px 0;
-    padding-left: 30px;
+    padding-left: 32px;
     cursor: pointer;
 }
 
@@ -51,7 +51,7 @@
     background-color: var(--color-black);
 }
 
-.selected-page {
+.selected {
     background-color: var(--color-black);
 }
 
@@ -62,4 +62,19 @@
 
 .delete-icon {
     margin-right: 30px;
+}
+
+.settings {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: var(--color-white);
+    padding: 10px 0;
+    padding-left: 30px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.settings:hover {
+    background-color: var(--color-black);
 }

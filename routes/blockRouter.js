@@ -6,7 +6,6 @@ const blockRouter = express.Router();
 blockRouter.post("/create", async (req, res) => {
     try {
         const id = await BlockService.createBlock(req.body);
-        console.log(id);
         res.status(201).json({id: id, message: "block created"});
     }catch(err){
         res.status(500).json({error: err.message, message: "Internal server error"});

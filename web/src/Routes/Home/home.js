@@ -9,6 +9,7 @@ const Home = () => {
    const [showSideNavBar, setShow] = useState(true);
    const [className, setClassName] = useState();
    const [selectPage, setPage] = useState('');
+   const [selectedPageName, setPageName] = useState('');
 
    useEffect(()=> {
       if(showSideNavBar) {
@@ -21,9 +22,9 @@ const Home = () => {
 
    return (
       <div className={className}>
-         <SideNavbar showSideNavBar={showSideNavBar} selectPage={selectPage} setPage={setPage}/>
-         <TopNavbar showSideNavBar={showSideNavBar} setShow={setShow} />
-         <PageDisplay/>
+         <SideNavbar showSideNavBar={showSideNavBar} selectPage={selectPage} setPage={setPage} setPageName={setPageName}/>
+         <TopNavbar showSideNavBar={showSideNavBar} setShow={setShow} selectedPageName={selectedPageName}/>
+         <PageDisplay selectPage={selectPage} />
       </div>
    );
 };

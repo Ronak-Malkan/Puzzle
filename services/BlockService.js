@@ -6,7 +6,6 @@ dotenv.config();
 export async function createBlock(blockData){
     try {
         const id = await Block_CRUD.insertBlock(blockData);
-        console.log("Id: ", id);
         return id;
     }catch(err) {
         throw err;

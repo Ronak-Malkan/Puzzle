@@ -15,8 +15,6 @@ app.use(express.static('./web/build'));
 
 app.use("/api", router);
 
-console.log(__dirname);
-
 app.get('*', (req, res) => {
     res.sendFile(__dirname + '/web/build', 'index.html');
 });
