@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import Page from "../Page/page";
 
 import "./page_display.css";
+import { BlockContext } from "../../context/block-context";
 
-const PageDisplay = ({selectPage, selectedPageName, pageList, setPageList, setPageName}) => {
+const PageDisplay = () => {
+
+    const {selectedPage} = useContext(BlockContext);
 
     const display = () => {
-        if(selectPage !== '' && selectPage !== 'settingsSelected'){
-            return (<Page selectPage={selectPage} selectedPageName={selectedPageName} pageList={pageList} setPageList={setPageList} setPageName={setPageName}/>)
+        if(selectedPage !== '' && selectedPage !== 'settingsSelected'){
+            return (<Page/>)
         }
         else {
             return <div></div>

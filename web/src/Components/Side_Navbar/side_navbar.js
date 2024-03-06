@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ReactComponent as Plus } from "../../Utils/Plus.svg";
 import { ReactComponent as Page } from "../../Utils/page.svg";
 import { ReactComponent as Delete } from "../../Utils/Delete.svg";
 import { ReactComponent as Settings } from "../../Utils/Settings.svg";
 
 import "./side_navbar.css";
+import { BlockContext } from "../../context/block-context";
 
 
-const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName, pageList, setPageList}) => {
+const SideNavbar = ({showSideNavBar}) => {
     const [name, setName] = useState('');
     const [token, setToken] = useState('');
+    const {selectedPage, setPage, setPageName, pageList, setPageList} = useContext(BlockContext);
 
     useEffect(() => {
         setName(localStorage.getItem('username'));
@@ -81,7 +83,7 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName, pageList,
     }
 
     const provideClassName = (pageId) => {
-        if(pageId === selectPage) {
+        if(pageId === selectedPage) {
             if(pageId === 'settingsSelected') return 'settings selected'
             return 'page-item selected';
         }
@@ -161,7 +163,7 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName, pageList,
                                     <div className="pagelogo-id-container">
                                         <Page data-title={title} data-pageid={`${page.id}`}/>
                                         &nbsp;&nbsp;
-                                        {title}
+                                        <div data-title={title} data-pageid={`${page.id}`}>{title}</div>
                                     </div>
                                     <Delete onClick={deletePage} data-title={title} data-pageid={`${page.id}`} className="delete-icon" />
                                 </div>

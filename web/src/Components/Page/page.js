@@ -1,23 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import ContentEditable from 'react-contenteditable';
 
 import "./page.css";
+import { BlockContext } from "../../context/block-context";
 
-const Page = ({selectPage, selectedPageName, pageList, setPageList, setPageName}) => {
+const Page = () => {
     const jwtToken = useRef('');
     const pageId = useRef('');
+    const {selectedPage, selectedPageName, setPageName, pageList, setPageList} = useContext(BlockContext)
 
     useEffect(() => {
         jwtToken.current = localStorage.getItem('token');
     }, [])
 
     useEffect(() => {
-        pageId.current = selectPage;
-    }, [selectPage]);
+        pageId.current = selectedPage;
+    }, [selectedPage]);
 
     useEffect(() => {
-        if((selectPage !== '' && selectPage !== 'settingsSelected') && jwtToken.current !== '') {
-            fetch(`api/block/blocks/${selectPage}`, {
+        if((selectedPage !== '' && selectedPage !== 'settingsSelected') && jwtToken.current !== '') {
+            fetch(`api/block/blocks/${selectedPage}`, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -34,7 +36,7 @@ const Page = ({selectPage, selectedPageName, pageList, setPageList, setPageName}
                 }
             })
         }
-    }, [selectPage, jwtToken])
+    }, [selectedPage, jwtToken])
 
     const handleTitleChange = useCallback((e) => {
         let propData = {
@@ -79,9 +81,19 @@ const Page = ({selectPage, selectedPageName, pageList, setPageList, setPageName}
         else return selectedPageName;
     }
 
+    const handleNewBlock = () => {
+
+    }
+
     return (
         <>
             <ContentEditable className="page-title-editable" onBlur={handleTitleChange} tagName="h1" disabled={false} placeholder={'Untitled'} html={headingHTML()}/>
+            <div className="new-block-container">
+                <ContentEditable className="new-block" onBlur={handleNewBlock} tagName="div" disabled={false} placeholder={"Type '/' for block types"} html=""/>
+                <div className="block-types-container">
+                    
+                </div>
+            </div>
         </>
     )
 }

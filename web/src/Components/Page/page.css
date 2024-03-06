@@ -3,6 +3,13 @@
     background-color: var(--color-black);
     font-weight: 500;
     color: var(--color-primary);
+    cursor: text;
+    padding: 5px 13px;
+    margin-bottom: 20px;
+}
+
+.page-title-editable:hover {
+    background-color: var(--color-light-black);
 }
 
 .page-title-editable:focus {
@@ -14,4 +21,38 @@
     content: attr(placeholder);
     display: block;
     color: #aaa;
+}
+
+.new-block-container {
+    position: relative;
+}
+
+.new-block {
+    font-size: 16px;
+    background-color: var(--color-black);
+    font-weight: 300;
+    color: var(--color-white);
+    cursor: text;
+    padding: 5px 13px;
+}
+
+.new-block:hover {
+    background-color: var(--color-light-black);
+}
+
+.new-block:focus {
+    border: none;
+    outline: none;
+}
+
+.block-types-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: 250px;
+    height: 150px;
+    background-color: var(--color-light-black);
+    padding: 10px 10px;
+    bottom: 101%;
+    left: 20px;
 }

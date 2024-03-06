@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ReactComponent as ArrowRight } from "../../Utils/Double_Arrow_Right.svg";
 import { ReactComponent as ArrowLeft } from "../../Utils/Double_Arrow_Left.svg";
 import { ReactComponent as Logout } from "../../Utils/Logout.svg";
 import { useNavigate } from "react-router-dom";
 import "./top_navbar.css";
+import { BlockContext } from "../../context/block-context";
 
-const TopNavbar = ({showSideNavBar, setShow, selectedPageName}) => {
+const TopNavbar = ({showSideNavBar, setShow}) => {
 
+    const {selectedPageName} = useContext(BlockContext);
     const navigate = useNavigate();
 
     const handleLogout = () => {
