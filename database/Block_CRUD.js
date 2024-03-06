@@ -12,6 +12,7 @@ const pool = new Pool({
 const CREATE_BLOCK_QUERY = 'INSERT INTO blocks (id, userid, block_type, position, parent, properties, children) VALUES ($1, $2, $3, $4, $5, $6, $7);';
 const INSERT_PROPERTY_QUERY = 'INSERT INTO properties (id, blockid, property_name, value) VALUES ($1, $2, $3, $4);';
 const UPDATE_BLOCK_QUERY = 'UPDATE blocks SET block_type=$1, position=$2, parent=$3, properties=$4, children=$5 WHERE id=$6';
+const UPDATE_PROPERTY_QUERY = 'UPDATE properties SET value=$1 WHERE blockid=$2 AND property_name=$3;'
 const GET_BLOCK_QUERY = 'SELECT * FROM blocks WHERE id=$1;';
 const GET_PROPERTIES_QUERY = 'SELECT * FROM properties WHERE blockid=$1;';
 const GET_PAGES_QUERY = 'SELECT * FROM blocks WHERE block_type=$1 AND userid=$2;';
@@ -35,6 +36,10 @@ export async function insertProperties(propertiesList, blockId){
 
 export async function updateBlock(block) {
     await pool.query(UPDATE_BLOCK_QUERY, [block.block_type, block.position, block.parent, block.properties, block.children, block.id]);
+}
+
+export async function updateProperty(blockId, property) {
+    await pool.query(UPDATE_PROPERTY_QUERY, [property.value, blockId, property.property_name]);
 }
 
 export async function getBlockById(blockId){

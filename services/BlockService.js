@@ -20,6 +20,14 @@ export async function updateBlock(blockData) {
     }
 }
 
+export async function updateProp(blockId, property) {
+    try {
+        await Block_CRUD.updateProperty(blockId, property);
+    }catch(err){
+        throw err;
+    }
+}
+
 export async function getAllPages(userId) {
     try {
         const pages = await Block_CRUD.getAllPageBlocks(userId);

@@ -1,0 +1,17 @@
+.page-title-editable {
+    font-size: 36px;
+    background-color: var(--color-black);
+    font-weight: 500;
+    color: var(--color-primary);
+}
+
+.page-title-editable:focus {
+    border: none;
+    outline: none;
+}
+
+[contenteditable=true]:empty:before {
+    content: attr(placeholder);
+    display: block;
+    color: #aaa;
+}

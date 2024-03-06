@@ -7,10 +7,9 @@ import { ReactComponent as Settings } from "../../Utils/Settings.svg";
 import "./side_navbar.css";
 
 
-const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName}) => {
+const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName, pageList, setPageList}) => {
     const [name, setName] = useState('');
     const [token, setToken] = useState('');
-    const [pageList, setPageList] = useState([]);
 
     useEffect(() => {
         setName(localStorage.getItem('username'));
@@ -34,7 +33,6 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName}) => {
             .then(res => res.json())
             .then(res => {
                 if(res.message === 'pages retrieved') {
-                    console.log(res.pages);
                     setPageList(res.pages);
                 }else {
                     console.log(res.error);
@@ -127,6 +125,8 @@ const SideNavbar = ({showSideNavBar, selectPage, setPage, setPageName}) => {
             if(res.message === 'block deleted') {
                const updatedList = pageList.filter((page) => page.id !== pageId);
                setPageList([...updatedList]);
+               setPage('');
+               setPageName('');
             }else {
                 console.log(res.error);
             }
