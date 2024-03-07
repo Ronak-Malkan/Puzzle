@@ -1,0 +1,17 @@
+.block-text {
+    font-size: 16px;
+    background-color: var(--color-black);
+    font-weight: 300;
+    color: var(--color-white);
+    cursor: text;
+    padding: 7px 13px;
+}
+
+.block-text:hover {
+    background-color: var(--color-light-black);
+}
+
+.block-text:focus {
+    border: none;
+    outline: none;
+}

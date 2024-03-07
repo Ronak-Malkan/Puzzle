@@ -33,7 +33,7 @@
     font-weight: 300;
     color: var(--color-white);
     cursor: text;
-    padding: 5px 13px;
+    padding: 7px 13px;
 }
 
 .new-block:hover {
@@ -52,7 +52,26 @@
     width: 250px;
     height: 150px;
     background-color: var(--color-light-black);
-    padding: 10px 10px;
-    bottom: 101%;
-    left: 20px;
+    bottom: 130%;
+    right: 40px;
+    overflow-y: scroll;
+}
+
+.block-types-heading {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    color: var(--color-primary);
+}
+
+.block-types {
+    font-size: 20px;
+    color: var(--color-white);
+    font-weight: 300;
+    padding: 8px 20px;
+    cursor: pointer;
+}
+
+.block-types:hover {
+    background-color: var(--color-black);
 }

@@ -3,11 +3,18 @@ import ContentEditable from 'react-contenteditable';
 
 import "./page.css";
 import { BlockContext } from "../../context/block-context";
+import { BLOCK_TYPES } from "../../Utils/block_types";
+import Block from "../Block/block";
 
 const Page = () => {
     const jwtToken = useRef('');
     const pageId = useRef('');
+    const newBlockHTML = useRef('');
+    const newBlockRef = useRef();
+    const latestPosition = useRef(1);
     const {selectedPage, selectedPageName, setPageName, pageList, setPageList} = useContext(BlockContext)
+    const [showBlockTypes, setShowBlockTypes] = useState(false);
+    const [blockList, setBlockList] = useState([]);
 
     useEffect(() => {
         jwtToken.current = localStorage.getItem('token');
@@ -30,7 +37,9 @@ const Page = () => {
             .then(res => res.json())
             .then(res => {
                 if(res.message === 'blocks retrieved') {
+                    latestPosition.current = latestPosition.current + res.blocks.length;
                     console.log(res.blocks);
+                    setBlockList(res.blocks);
                 }else {
                     console.log(res.error);
                 }
@@ -81,18 +90,83 @@ const Page = () => {
         else return selectedPageName;
     }
 
-    const handleNewBlock = () => {
+    const createBlock = (html) => {
+        let newBlockData = {
+            block_type: BLOCK_TYPES.TEXT,
+            position: latestPosition.current,
+            parent: pageId.current,
+            properties: true,
+            children: false,
+            propertiesList: [
+                {
+                    property_name: 'title',
+                    value: html
+                }
+            ]
+        }
+        fetch('api/block/create', {
+            method: 'POST',
+            headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwtToken.current}`
+            },
+            body: JSON.stringify(newBlockData)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.message === 'block created') {
+                console.log('block created');
+                newBlockRef.current.innerHTML = '';
+                newBlockHTML.current = '';
+                latestPosition.current = latestPosition.current + 1;
+            }else {
+                console.log(res.error);
+            }
+        })
+    }
 
+    const handleNewBlockBlur = (e) => {
+        if(e.target.innerHTML !== '') {
+            createBlock(e.target.innerHTML);
+        }
+    }
+    
+    const handleNewBlockKeyDown = (e) => {
+        if(e.key === 'Enter' && newBlockHTML.current !== ''){
+            e.preventDefault();
+            createBlock(newBlockHTML.current);
+        }
+    }
+
+    const handleNewBlockChange = (e) => {
+        newBlockHTML.current = e.target.value;
+        if(e.target.value === '/') {
+            setShowBlockTypes(true);
+        }
+        else {
+            setShowBlockTypes(false);
+        }
     }
 
     return (
         <>
             <ContentEditable className="page-title-editable" onBlur={handleTitleChange} tagName="h1" disabled={false} placeholder={'Untitled'} html={headingHTML()}/>
+            {
+                blockList.map((block) => {
+                    return <Block key={block.id} block={block}/>
+                })
+            }
             <div className="new-block-container">
-                <ContentEditable className="new-block" onBlur={handleNewBlock} tagName="div" disabled={false} placeholder={"Type '/' for block types"} html=""/>
-                <div className="block-types-container">
-                    
-                </div>
+                <ContentEditable innerRef={newBlockRef} className="new-block" onBlur={handleNewBlockBlur} onChange={handleNewBlockChange} onKeyDown={handleNewBlockKeyDown} tagName="div" disabled={false} placeholder={"Type '/' for block types"} html={newBlockHTML.current}/>
+                {showBlockTypes && <div className="block-types-container">
+                    <h3 className="block-types-heading">Blocks</h3>
+                    <div className="block-types">Heading 1</div>
+                    <div className="block-types">Heading 2</div>
+                    <div className="block-types">Heading 3</div>
+                    <div className="block-types">Text</div>
+                    <div className="block-types">To Do List</div>
+                </div>}
             </div>
         </>
     )

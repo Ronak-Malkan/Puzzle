@@ -6,6 +6,7 @@ import { ReactComponent as Settings } from "../../Utils/Settings.svg";
 
 import "./side_navbar.css";
 import { BlockContext } from "../../context/block-context";
+import { BLOCK_TYPES } from "../../Utils/block_types";
 
 
 const SideNavbar = ({showSideNavBar}) => {
@@ -46,7 +47,7 @@ const SideNavbar = ({showSideNavBar}) => {
     const addNewPage = () => {
         if(token !== ''){
             const pageData = {
-                block_type: "page",
+                block_type: BLOCK_TYPES.PAGE,
                 position: 0,
                 parent: null,
                 properties: true,
