@@ -5,6 +5,8 @@
     color: var(--color-white);
     cursor: text;
     padding: 7px 13px;
+    white-space: pre-wrap !important;
+    word-break: break-word;
 }
 
 .block-text:hover {
@@ -12,6 +14,84 @@
 }
 
 .block-text:focus {
+    border: none;
+    outline: none;
+}
+
+.block-heading1 {
+    font-size: 28px;
+    background-color: var(--color-black);
+    font-weight: 600;
+    color: var(--color-white);
+    cursor: text;
+    padding: 13px 13px;
+    margin: 13px 0;
+}
+
+.block-heading1:hover {
+    background-color: var(--color-light-black);
+}
+
+.block-heading1:focus {
+    border: none;
+    outline: none;
+}
+
+.block-heading2 {
+    font-size: 24px;
+    background-color: var(--color-black);
+    font-weight: 500;
+    color: var(--color-white);
+    cursor: text;
+    padding: 10px 13px;
+    margin: 5px 0;
+}
+
+.block-heading2:hover {
+    background-color: var(--color-light-black);
+}
+
+.block-heading2:focus {
+    border: none;
+    outline: none;
+}
+
+.block-heading3 {
+    font-size: 19px;
+    background-color: var(--color-black);
+    font-weight: 500;
+    color: var(--color-white);
+    cursor: text;
+    padding: 7px 13px;
+}
+
+.block-heading3:hover {
+    background-color: var(--color-light-black);
+}
+
+.block-heading3:focus {
+    border: none;
+    outline: none;
+}
+
+ul {
+    margin-left: 40px;
+}
+
+.block-ul {
+    font-size: 16px;
+    background-color: var(--color-black);
+    font-weight: 300;
+    color: var(--color-white);
+    cursor: text;
+    padding: 7px 13px;
+}
+
+.block-ul:hover {
+    background-color: var(--color-light-black);
+}
+
+.block-ul:focus {
     border: none;
     outline: none;
 }

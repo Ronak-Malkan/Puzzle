@@ -52,6 +52,7 @@
     width: 250px;
     height: 150px;
     background-color: var(--color-light-black);
+    border-radius: 7px;
     bottom: 130%;
     right: 40px;
     overflow-y: scroll;
@@ -69,9 +70,17 @@
     color: var(--color-white);
     font-weight: 300;
     padding: 8px 20px;
+    margin: 2px 4px;
+    border-radius: 4px;
     cursor: pointer;
 }
 
 .block-types:hover {
     background-color: var(--color-black);
+}
+
+.block-types:focus {
+    background-color: var(--color-black);
+    border: none;
+    outline: none;
 }
