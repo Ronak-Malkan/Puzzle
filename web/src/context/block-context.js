@@ -11,7 +11,11 @@ export const BlockContext = createContext({
    setBlockList: () => null,
    focusId: null,
    setFocusId: () => null,
-   blockListRef: null
+   blockListRef: null,
+   blockContainerList: null,
+   pageBottom: null,
+   pageRef: null,
+   draggingElementRef: null
 });
 
 export const BlockContextProvider = ({ children }) => {
@@ -21,9 +25,13 @@ export const BlockContextProvider = ({ children }) => {
     const [blockList, setBlockList] = useState([]);
     const [focusId, setFocusId] = useState('');
     const blockListRef = useRef([]);
+    const blockContainerList = useRef([]);
+    const pageBottom = useRef();
+    const pageRef = useRef(null);
+    const draggingElementRef = useRef();
 
    return (
-      <BlockContext.Provider value={{ selectedPage, setPage, selectedPageName, setPageName, pageList, setPageList, blockList, setBlockList, focusId, setFocusId, blockListRef }}>
+      <BlockContext.Provider value={{ selectedPage, setPage, selectedPageName, setPageName, pageList, setPageList, blockList, setBlockList, focusId, setFocusId, blockListRef, blockContainerList, pageBottom, pageRef, draggingElementRef }}>
          {children}
       </BlockContext.Provider>
    );

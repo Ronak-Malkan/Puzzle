@@ -1,3 +1,31 @@
+.block {
+    display: flex;
+    align-items: center;
+    cursor: move;
+}
+
+.drag-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    flex-grow: 0;
+    margin-right: 15px;
+}
+
+.dragging-block {
+    background-color: var(--color-light-black) !important;
+}
+
+.block:hover .drag-icon {
+    display: inline-block;
+    visibility: visible;
+}
+
+.block-flex-grow {
+    flex-grow: 1;
+}
+
 .block-text {
     font-size: 16px;
     background-color: var(--color-black);
@@ -7,10 +35,6 @@
     padding: 7px 13px;
     white-space: pre-wrap !important;
     word-break: break-word;
-}
-
-.block-text:hover {
-    background-color: var(--color-light-black);
 }
 
 .block-text:focus {
@@ -26,10 +50,8 @@
     cursor: text;
     padding: 13px 13px;
     margin: 13px 0;
-}
-
-.block-heading1:hover {
-    background-color: var(--color-light-black);
+    white-space: pre-wrap !important;
+    word-break: break-word;
 }
 
 .block-heading1:focus {
@@ -45,10 +67,8 @@
     cursor: text;
     padding: 10px 13px;
     margin: 5px 0;
-}
-
-.block-heading2:hover {
-    background-color: var(--color-light-black);
+    white-space: pre-wrap !important;
+    word-break: break-word;
 }
 
 .block-heading2:focus {
@@ -63,10 +83,8 @@
     color: var(--color-white);
     cursor: text;
     padding: 7px 13px;
-}
-
-.block-heading3:hover {
-    background-color: var(--color-light-black);
+    white-space: pre-wrap !important;
+    word-break: break-word;
 }
 
 .block-heading3:focus {
@@ -85,10 +103,8 @@ ul {
     color: var(--color-white);
     cursor: text;
     padding: 7px 13px;
-}
-
-.block-ul:hover {
-    background-color: var(--color-light-black);
+    white-space: pre-wrap !important;
+    word-break: break-word;
 }
 
 .block-ul:focus {

@@ -28,6 +28,14 @@ export async function updateProp(blockId, property) {
     }
 }
 
+export async function updateBlocksPosition(blockArray) {
+    try {
+        await Block_CRUD.updatePositions(blockArray);
+    }catch(err) {
+        throw err;
+    }
+}
+
 export async function getAllPages(userId) {
     try {
         const pages = await Block_CRUD.getAllPageBlocks(userId);

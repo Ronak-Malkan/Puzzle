@@ -13,10 +13,11 @@ const Page = () => {
     const newBlockHTML = useRef('');
     const newBlockRef = useRef();
     const latestPosition = useRef(1);
-    const {selectedPage, selectedPageName, setPageName, pageList, setPageList, blockList, setBlockList, setFocusId, blockListRef} = useContext(BlockContext)
+    const {selectedPage, selectedPageName, setPageName, pageList, setPageList, blockList, setBlockList, setFocusId, blockListRef, pageBottom, pageRef, blockContainerList, draggingElementRef} = useContext(BlockContext)
     const [showBlockTypes, setShowBlockTypes] = useState(false);
     const heading1Ref = useRef(null);
     const currentType = useRef(null);
+    const blocksContainerRef = useRef(null);
     const sanitizeHTMLConfig = {
         disallowedTagsMode: 'discard',
         allowedTags: [
@@ -104,7 +105,6 @@ const Page = () => {
     }
 
     const createBlock = (html, type, focusNext) => {
-        //const sanitizedHTML = sanitizeHtml(html, sanitizeHTMLConfig);
         let newBlockData = {
             block_type: type,
             position: latestPosition.current,
@@ -134,6 +134,7 @@ const Page = () => {
                 const updateBLockList = blockListRef.current;
                 updateBLockList.push(newBlockData);
                 setBlockList([...updateBLockList]);
+                blockListRef.current = updateBLockList;
                 newBlockRef.current.innerHTML = '';
                 newBlockHTML.current = '';
                 setShowBlockTypes(false);
@@ -216,15 +217,64 @@ const Page = () => {
             e.preventDefault();
         }
     }
+
+    const dragOverHandler = (e) => {
+        if(pageBottom.current - e.clientY < 260) pageRef.current.scrollBy(0, 1);
+        if(e.clientY - blocksContainerRef.current.offsetTop < 70) pageRef.current.scrollBy(0, -1);
+        let draggingElementIndex;
+        let closestElementIndex;
+        let closestValue = Number.NEGATIVE_INFINITY;
+        blockContainerList.current.forEach((block, index) => {
+            if(block === draggingElementRef.current) {
+                draggingElementIndex = index;
+            }
+            else {
+                if(e.clientY - block.getBoundingClientRect().top < 0 && e.clientY - block.getBoundingClientRect().top > closestValue) {
+                    closestElementIndex = index;
+                    closestValue = e.clientY - block.getBoundingClientRect().top;
+                }
+            }
+        });
+
+        if(draggingElementIndex - closestElementIndex === -1 || ( draggingElementIndex === blockContainerList.current.length-1 && closestElementIndex === undefined )) {
+            return;
+        }
+        else if(closestElementIndex === undefined ) {
+            let newBlocksContainerArray = [...blockContainerList.current.slice(0, draggingElementIndex), ... blockContainerList.current.slice(draggingElementIndex+1), blockContainerList.current[draggingElementIndex]];
+            let newBlocksArray = [...blockListRef.current.slice(0, draggingElementIndex), ... blockListRef.current.slice(draggingElementIndex+1), blockListRef.current[draggingElementIndex]];
+            blockContainerList.current = newBlocksContainerArray;
+            setBlockList([...newBlocksArray]);
+            blockListRef.current = newBlocksArray;
+        }
+        else if(closestElementIndex > draggingElementIndex) {
+            let newBlocksContainerArray = [...blockContainerList.current.slice(0, draggingElementIndex), ... blockContainerList.current.slice(draggingElementIndex+1, closestElementIndex), blockContainerList.current[draggingElementIndex], ... blockContainerList.current.slice(closestElementIndex)];
+            let newBlocksArray = [...blockListRef.current.slice(0, draggingElementIndex), ... blockListRef.current.slice(draggingElementIndex+1, closestElementIndex), blockListRef.current[draggingElementIndex], ... blockListRef.current.slice(closestElementIndex)];
+            blockContainerList.current = newBlocksContainerArray;
+            setBlockList([...newBlocksArray]);
+            blockListRef.current = newBlocksArray;
+        }
+        else if(closestElementIndex < draggingElementIndex) {
+            let newBlocksContainerArray = [...blockContainerList.current.slice(0, closestElementIndex), blockContainerList.current[draggingElementIndex], ... blockContainerList.current.slice( closestElementIndex, draggingElementIndex), ... blockContainerList.current.slice(draggingElementIndex + 1)];
+
+            let newBlocksArray = [...blockListRef.current.slice(0, closestElementIndex), blockListRef.current[draggingElementIndex], ... blockListRef.current.slice( closestElementIndex, draggingElementIndex), ... blockListRef.current.slice(draggingElementIndex + 1)];
+
+            blockContainerList.current = newBlocksContainerArray;
+            setBlockList([...newBlocksArray]);
+            blockListRef.current = newBlocksArray;
+        }
+    }
  
     return (
         <>
             <ContentEditable className="page-title-editable" onBlur={handleTitleChange} onKeyDown={handleTitleKeyDown} tagName="h1" disabled={false} placeholder={'Untitled'} html={headingHTML()}/>
-            {
-                blockList.map((block) => {
-                    return <Block key={block.id} newBlockRef={newBlockRef} createBlock={createBlock} block={block}/>
-                })
-            }
+            <div ref={blocksContainerRef} className="blocks-container" onDragOver={dragOverHandler}>
+                {
+                    blockList !== undefined  && blockList.map((block) => {
+                        //if(block !== undefined)
+                        return <Block key={block.id} newBlockRef={newBlockRef} createBlock={createBlock} block={block}/>;
+                    })        
+                }
+            </div>
             <div className="new-block-container">
                 <ContentEditable innerRef={newBlockRef} className="new-block" onBlur={handleNewBlockBlur} onChange={handleNewBlockChange} onKeyDown={handleNewBlockKeyDown} tagName="div" disabled={false} placeholder={"Type '/' for block types"} html={newBlockHTML.current}/>
                 {showBlockTypes && <div className="block-types-container" role="menu">

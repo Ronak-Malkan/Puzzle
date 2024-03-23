@@ -30,6 +30,15 @@ blockRouter.post("/updateprop", async (req, res) => {
     }
 })
 
+blockRouter.post('/updatepositions', async (req, res) => {
+    try {
+        await BlockService.updateBlocksPosition(req.body);
+        res.status(200).json({message: 'Positions updated'});
+    }catch (err) {
+        res.status(500).json({error: err.message, message: 'Internal Server Error'});
+    }
+})
+
 blockRouter.get("/pages", async (req, res) => {
     try {
         const pages = await BlockService.getAllPages(req.body.user);

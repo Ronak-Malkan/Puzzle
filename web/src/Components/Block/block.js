@@ -4,20 +4,15 @@ import ContentEditable from 'react-contenteditable';
 import "./block.css";
 import { BlockContext } from "../../context/block-context";
 import { BLOCK_TYPES } from "../../Utils/block_types";
-import sanitizeHtml from 'sanitize-html';
+import { ReactComponent as DragIcon } from "../../Utils/Drag.svg";
 
 const Block = ({block, newBlockRef, createBlock}) => {
     const jwtToken = useRef('');
     const [content, setContent] = useState('');
     const contentRef = useRef('');
-    const {setBlockList, focusId, blockListRef} = useContext(BlockContext);
+    const {setBlockList, focusId, blockListRef, blockContainerList, draggingElementRef} = useContext(BlockContext);
     const blockRef = useRef(null);
-
-    const sanitizeHTMLConfig = {
-        disallowedTagsMode: 'discard',
-        allowedTags: [
-        ],
-    }
+    const blockContainerRef = useRef(null);
 
     useEffect(() => {
         for(let property of block.propertiesList) {
@@ -34,6 +29,12 @@ const Block = ({block, newBlockRef, createBlock}) => {
             setTimeout(() => blockRef.current.focus(), 0);
         }
     }, [focusId])
+
+    useEffect(() => {
+        if(blockContainerRef.current !== null) {
+            blockContainerList.current.push(blockContainerRef.current);
+        }
+    }, [])
     
 
     const updateProperty = (value) => {
@@ -89,51 +90,92 @@ const Block = ({block, newBlockRef, createBlock}) => {
                 if(res.message === 'block deleted') {
                     setTimeout(() => newBlockRef.current.focus(), 0);
                     const updatedList = blockListRef.current.filter((Block) => Block.id !== block.id);
+                    const updatedContainerList = blockContainerList.current.filter((Block) => Block !== blockContainerRef.current);
                     setBlockList([...updatedList]);
+                    blockListRef.current = updatedList;
+                    blockContainerList.current = updatedContainerList;
                 }
             })
         }
     }
 
     const handleBlockChange = (e) => {
-        //const sanitizedHTML = sanitizeHtml(e.target.value, sanitizeHTMLConfig);
         setContent(e.target.value);
         contentRef.current = e.target.value;
+    }
+
+    const dragStartHandler = (e) => {
+        blockContainerRef.current.classList.add('dragging-block');
+        blockRef.current.classList.add('dragging-block');
+        draggingElementRef.current = e.target;
+    }
+
+    const dragEndHandler = (e) => {
+        blockContainerRef.current.classList.remove('dragging-block');
+        blockRef.current.classList.remove('dragging-block');
+        let blockArray = [];
+        blockListRef.current.forEach((block, index) => {
+            blockArray.push([block.id, index+1]);
+        });
+        console.log(blockArray);
+        fetch('api/block/updatepositions', {
+            method: 'POST',
+            headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwtToken.current}`
+            },
+            body: JSON.stringify(blockArray)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.message !== 'Positions updated') {
+                console.log(res.error);
+            }
+            else {
+                console.log('Positions updated');
+            }
+        })
     }
 
     const displayBlock = () => {
         if(block.block_type ===  BLOCK_TYPES.TEXT) {
             return (
-                <div>
-                    <ContentEditable innerRef={blockRef} className="block-text" placeholder="Enter text" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="p" disabled={false} html={content}/>
+                <div data-blockid={block.id} ref={blockContainerRef} onDragStart={dragStartHandler} onDragEnd={dragEndHandler} className="block" draggable="true">
+                    <div className='drag-icon'><DragIcon/></div>
+                    <ContentEditable innerRef={blockRef} className="block-text block-flex-grow" placeholder="Enter text" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="p" disabled={false} html={content}/>
                 </div>
             )
         }
         else if(block.block_type === BLOCK_TYPES.HEADING1) {
             return (
-                <div>
-                    <ContentEditable innerRef={blockRef} className="block-heading1" placeholder="Enter Heading 1" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="h1" disabled={false} html={content}/>
+                <div data-blockid={block.id} ref={blockContainerRef} onDragStart={dragStartHandler} onDragEnd={dragEndHandler} className="block" draggable="true">
+                    <div className='drag-icon'><DragIcon/></div>
+                    <ContentEditable innerRef={blockRef} className="block-heading1 block-flex-grow" placeholder="Enter Heading 1" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="h1" disabled={false} html={content}/>
                 </div>
             )
         }
         else if(block.block_type === BLOCK_TYPES.HEADING2) {
             return (
-                <div>
-                    <ContentEditable innerRef={blockRef} className="block-heading2" placeholder="Enter Heading 2" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="h2" disabled={false} html={content}/>
+                <div data-blockid={block.id} ref={blockContainerRef} onDragStart={dragStartHandler} onDragEnd={dragEndHandler} className="block" draggable="true">
+                    <div className='drag-icon'><DragIcon/></div>
+                    <ContentEditable innerRef={blockRef} className="block-heading2 block-flex-grow" placeholder="Enter Heading 2" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="h2" disabled={false} html={content}/>
                 </div>
             )
         }
         else if(block.block_type === BLOCK_TYPES.HEADING3) {
             return (
-                <div>
-                    <ContentEditable innerRef={blockRef} className="block-heading3" placeholder="Enter Heading 3" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="h3" disabled={false} html={content}/>
+                <div data-blockid={block.id} ref={blockContainerRef} onDragStart={dragStartHandler} onDragEnd={dragEndHandler} className="block" draggable="true">
+                    <div className='drag-icon'><DragIcon/></div>
+                    <ContentEditable innerRef={blockRef} className="block-heading3 block-flex-grow" placeholder="Enter Heading 3" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="h3" disabled={false} html={content}/>
                 </div>
             )
         }
         else if(block.block_type === BLOCK_TYPES.UNORDEREDLIST) {
             return (
-                <ul>
-                    <ContentEditable innerRef={blockRef} className="block-ul" placeholder="Enter List item" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 1, BLOCK_TYPES.UNORDEREDLIST)} tagName="li" disabled={false} html={content}/>
+                <ul data-blockid={block.id} ref={blockContainerRef} onDragStart={dragStartHandler} onDragEnd={dragEndHandler} className="block" draggable="true">
+                    <div className='drag-icon'><DragIcon/></div>
+                    <ContentEditable innerRef={blockRef} className="block-ul block-flex-grow" placeholder="Enter List item" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 1, BLOCK_TYPES.UNORDEREDLIST)} tagName="li" disabled={false} html={content}/>
                 </ul>
             )
         }

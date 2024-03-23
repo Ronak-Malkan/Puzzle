@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import Page from "../Page/page";
 
 import "./page_display.css";
@@ -6,7 +6,13 @@ import { BlockContext } from "../../context/block-context";
 
 const PageDisplay = () => {
 
-    const {selectedPage} = useContext(BlockContext);
+    const {selectedPage, pageBottom, pageRef} = useContext(BlockContext);
+
+    useEffect(() => {
+        if(pageRef.current !== null){
+             pageBottom.current = pageRef.current.offsetTop + pageRef.current.clientHeight;
+        }
+    }, [pageRef])
 
     const display = () => {
         if(selectedPage !== '' && selectedPage !== 'settingsSelected'){
@@ -18,7 +24,7 @@ const PageDisplay = () => {
     }
 
     return (
-        <div className="page-container">
+        <div ref={pageRef} className="page-container">
             {
                 display()
             }

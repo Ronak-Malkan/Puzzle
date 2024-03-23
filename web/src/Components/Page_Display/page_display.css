@@ -1,6 +1,6 @@
 .page-container {
     display: inline-block;
-    padding: 50px 150px;
+    padding: 50px 120px;
     background-color: var(--color-black);
     overflow-y: scroll;
 }

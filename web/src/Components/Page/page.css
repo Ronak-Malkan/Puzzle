@@ -5,6 +5,7 @@
     color: var(--color-primary);
     cursor: text;
     padding: 5px 13px;
+    margin-left: 35px;
     margin-bottom: 20px;
 }
 
@@ -23,6 +24,10 @@
     color: #aaa;
 }
 
+.blocks-container {
+    width: 100%;
+}
+
 .new-block-container {
     position: relative;
 }
@@ -34,6 +39,7 @@
     color: var(--color-white);
     cursor: text;
     padding: 7px 13px;
+    margin-left: 35px;
 }
 
 .new-block:hover {
