@@ -111,3 +111,14 @@ ul {
     border: none;
     outline: none;
 }
+
+.checkBoxContainer {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+}
+
+.checkbox {
+    margin-left: 15px;
+    cursor: pointer;
+}

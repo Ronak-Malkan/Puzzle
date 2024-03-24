@@ -118,6 +118,12 @@ const Page = () => {
                 }
             ]
         }
+        if(type === BLOCK_TYPES.CHECKLIST) {
+            newBlockData.propertiesList.push({
+                property_name: 'checked',
+                value: false
+            })
+        }
         fetch('api/block/create', {
             method: 'POST',
             headers: {
@@ -298,6 +304,10 @@ const Page = () => {
 
                     <div className="block-types" tabIndex='-1' role="menuitem" onKeyDown={(e) => handleBlockTypeKeyDown(BLOCK_TYPES.UNORDEREDLIST, e)}  onClick={() => { currentType.current = null; createBlock('', BLOCK_TYPES.UNORDEREDLIST, 1); }}>
                         Unordered List
+                    </div>
+
+                    <div className="block-types" tabIndex='-1' role="menuitem" onKeyDown={(e) => handleBlockTypeKeyDown(BLOCK_TYPES.CHECKLIST, e)}  onClick={() => { currentType.current = null; createBlock('', BLOCK_TYPES.CHECKLIST, 1); }}>
+                        To Do List
                     </div>
                 </div>}
             </div>

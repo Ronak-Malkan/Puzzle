@@ -13,12 +13,17 @@ const Block = ({block, newBlockRef, createBlock}) => {
     const {setBlockList, focusId, blockListRef, blockContainerList, draggingElementRef} = useContext(BlockContext);
     const blockRef = useRef(null);
     const blockContainerRef = useRef(null);
+    const [checked, setChecked] = useState(false);
 
     useEffect(() => {
         for(let property of block.propertiesList) {
             if(property.property_name === 'title') {
                 setContent(property.value);
                 contentRef.current = property.value;
+            }
+            else if( property.property_name === 'checked'){
+                if(property.value === 'true') setChecked(true)
+                else setChecked(false);
             }
         }
         jwtToken.current = localStorage.getItem('token');
@@ -104,6 +109,32 @@ const Block = ({block, newBlockRef, createBlock}) => {
         contentRef.current = e.target.value;
     }
 
+    const checkboxChangeHandler = (e) => {
+        setChecked(e.target.checked);
+        let propData = {
+            blockId: block.id,
+            property: {
+                property_name: 'checked',
+                value: e.target.checked
+            }
+        }
+        fetch('api/block/updateprop', {
+            method: 'POST',
+            headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwtToken.current}`
+            },
+            body: JSON.stringify(propData)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.message !== 'property updated') {
+                console.log(res.error);
+            }
+        })
+    }
+
     const dragStartHandler = (e) => {
         blockContainerRef.current.classList.add('dragging-block');
         blockRef.current.classList.add('dragging-block');
@@ -177,6 +208,18 @@ const Block = ({block, newBlockRef, createBlock}) => {
                     <div className='drag-icon'><DragIcon/></div>
                     <ContentEditable innerRef={blockRef} className="block-ul block-flex-grow" placeholder="Enter List item" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 1, BLOCK_TYPES.UNORDEREDLIST)} tagName="li" disabled={false} html={content}/>
                 </ul>
+            )
+        }
+        else if(block.block_type === BLOCK_TYPES.CHECKLIST) {
+            return (
+                <div data-blockid={block.id} ref={blockContainerRef} onDragStart={dragStartHandler} onDragEnd={dragEndHandler} className="block" draggable="true">
+                    <div className='drag-icon'><DragIcon/></div>
+                    <div className="checkBoxContainer">
+                        <input type="checkbox" className="checkbox" checked={checked} onChange={checkboxChangeHandler}/>
+                        <ContentEditable 
+                        innerRef={blockRef} className="block-text block-flex-grow" placeholder="Enter To Do List" onChange={handleBlockChange} onBlur={onBlockBlur} onKeyDown={(e) => onBlockKeyDown(e, 0, '')} tagName="p" disabled={false} html={content}/>
+                    </div>
+                </div>
             )
         }
     }
