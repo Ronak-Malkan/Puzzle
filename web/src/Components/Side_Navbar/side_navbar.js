@@ -21,6 +21,7 @@ const SideNavbar = ({showSideNavBar}) => {
 
     useEffect(() => {
         fetchPageList();
+        // eslint-disable-next-line
     }, [token])
 
     const fetchPageList = () => {

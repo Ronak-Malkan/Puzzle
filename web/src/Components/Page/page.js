@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ContentEditable from 'react-contenteditable';
 
 import "./page.css";
@@ -34,7 +34,7 @@ const Page = () => {
 
     useEffect(() => {
         blockListRef.current = blockList;
-        console.log(blockList);
+        // eslint-disable-next-line
     }, [blockList]);
 
     useEffect(() => {
@@ -58,6 +58,7 @@ const Page = () => {
                 }
             })
         }
+        // eslint-disable-next-line
     }, [selectedPage, jwtToken])
 
     const handleTitleChange = (e) => {
@@ -246,23 +247,24 @@ const Page = () => {
             return;
         }
         else if(closestElementIndex === undefined ) {
-            let newBlocksContainerArray = [...blockContainerList.current.slice(0, draggingElementIndex), ... blockContainerList.current.slice(draggingElementIndex+1), blockContainerList.current[draggingElementIndex]];
-            let newBlocksArray = [...blockListRef.current.slice(0, draggingElementIndex), ... blockListRef.current.slice(draggingElementIndex+1), blockListRef.current[draggingElementIndex]];
+            let newBlocksContainerArray = [...blockContainerList.current.slice(0, draggingElementIndex), ...blockContainerList.current.slice(draggingElementIndex+1), blockContainerList.current[draggingElementIndex]];
+            let newBlocksArray = [...blockListRef.current.slice(0, draggingElementIndex), ...blockListRef.current.slice(draggingElementIndex+1), blockListRef.current[draggingElementIndex]];
             blockContainerList.current = newBlocksContainerArray;
             setBlockList([...newBlocksArray]);
             blockListRef.current = newBlocksArray;
+            // eslint-disable-next-line
         }
         else if(closestElementIndex > draggingElementIndex) {
-            let newBlocksContainerArray = [...blockContainerList.current.slice(0, draggingElementIndex), ... blockContainerList.current.slice(draggingElementIndex+1, closestElementIndex), blockContainerList.current[draggingElementIndex], ... blockContainerList.current.slice(closestElementIndex)];
-            let newBlocksArray = [...blockListRef.current.slice(0, draggingElementIndex), ... blockListRef.current.slice(draggingElementIndex+1, closestElementIndex), blockListRef.current[draggingElementIndex], ... blockListRef.current.slice(closestElementIndex)];
+            let newBlocksContainerArray = [...blockContainerList.current.slice(0, draggingElementIndex), ...blockContainerList.current.slice(draggingElementIndex+1, closestElementIndex), blockContainerList.current[draggingElementIndex], ...blockContainerList.current.slice(closestElementIndex)];
+            let newBlocksArray = [...blockListRef.current.slice(0, draggingElementIndex), ...blockListRef.current.slice(draggingElementIndex+1, closestElementIndex), blockListRef.current[draggingElementIndex], ...blockListRef.current.slice(closestElementIndex)];
             blockContainerList.current = newBlocksContainerArray;
             setBlockList([...newBlocksArray]);
             blockListRef.current = newBlocksArray;
         }
         else if(closestElementIndex < draggingElementIndex) {
-            let newBlocksContainerArray = [...blockContainerList.current.slice(0, closestElementIndex), blockContainerList.current[draggingElementIndex], ... blockContainerList.current.slice( closestElementIndex, draggingElementIndex), ... blockContainerList.current.slice(draggingElementIndex + 1)];
+            let newBlocksContainerArray = [...blockContainerList.current.slice(0, closestElementIndex), blockContainerList.current[draggingElementIndex], ...blockContainerList.current.slice( closestElementIndex, draggingElementIndex), ...blockContainerList.current.slice(draggingElementIndex + 1)];
 
-            let newBlocksArray = [...blockListRef.current.slice(0, closestElementIndex), blockListRef.current[draggingElementIndex], ... blockListRef.current.slice( closestElementIndex, draggingElementIndex), ... blockListRef.current.slice(draggingElementIndex + 1)];
+            let newBlocksArray = [...blockListRef.current.slice(0, closestElementIndex), blockListRef.current[draggingElementIndex], ...blockListRef.current.slice( closestElementIndex, draggingElementIndex), ...blockListRef.current.slice(draggingElementIndex + 1)];
 
             blockContainerList.current = newBlocksContainerArray;
             setBlockList([...newBlocksArray]);

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { ReactComponent as ArrowRight } from "../../Utils/Double_Arrow_Right.svg";
 import { ReactComponent as ArrowLeft } from "../../Utils/Double_Arrow_Left.svg";
 import { ReactComponent as Logout } from "../../Utils/Logout.svg";

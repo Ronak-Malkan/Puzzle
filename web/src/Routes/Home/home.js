@@ -10,7 +10,6 @@ import "./home.css";
 const Home = () => {
    const [showSideNavBar, setShow] = useState(true);
    const [className, setClassName] = useState();
-   const [pageList, setPageList] = useState([]);
    const navigate = useNavigate();
 
    useEffect(() => {
@@ -33,7 +32,7 @@ const Home = () => {
              navigate("/");
          }
      })
-   }, [])
+   })
 
    useEffect(()=> {
       if(showSideNavBar) {

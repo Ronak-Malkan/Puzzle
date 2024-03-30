@@ -27,18 +27,21 @@ const Block = ({block, newBlockRef, createBlock}) => {
             }
         }
         jwtToken.current = localStorage.getItem('token');
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
         if(focusId === block.id && blockRef.current !== null){
             setTimeout(() => blockRef.current.focus(), 0);
         }
-    }, [focusId])
+        // eslint-disable-next-line
+    }, [focusId]) 
 
     useEffect(() => {
         if(blockContainerRef.current !== null) {
             blockContainerList.current.push(blockContainerRef.current);
         }
+        // eslint-disable-next-line
     }, [])
     
 

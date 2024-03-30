@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Logo from "../../Utils/Puzzle_Logo.png";
 
 import "./auth_logo.css";

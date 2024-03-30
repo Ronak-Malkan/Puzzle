@@ -16,7 +16,7 @@ app.use(express.static('./web/build'));
 app.use("/api", router);
 
 app.get('*', (req, res) => {
-    res.sendFile(__dirname + '/web/build', 'index.html');
+    res.sendFile(__dirname + '/web/build/'+'index.html');
 });
 
 app.listen(port, () => {
