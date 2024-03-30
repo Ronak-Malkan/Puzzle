@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import Page from "../Page/page";
+import Settings from "../Settings/settings";
 
 import "./page_display.css";
 import { BlockContext } from "../../context/block-context";
@@ -18,6 +19,9 @@ const PageDisplay = () => {
     const display = () => {
         if(selectedPage !== '' && selectedPage !== 'settingsSelected'){
             return (<Page/>)
+        }
+        else if(selectedPage === 'settingsSelected'){
+            return (<Settings/>)
         }
         else {
             return <div></div>

@@ -151,7 +151,6 @@ const Block = ({block, newBlockRef, createBlock}) => {
         blockListRef.current.forEach((block, index) => {
             blockArray.push([block.id, index+1]);
         });
-        console.log(blockArray);
         fetch('api/block/updatepositions', {
             method: 'POST',
             headers: {

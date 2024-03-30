@@ -30,6 +30,7 @@ const Page = () => {
 
     useEffect(() => {
         pageId.current = selectedPage;
+        blockContainerList.current = [];
     }, [selectedPage]);
 
     useEffect(() => {
@@ -51,7 +52,6 @@ const Page = () => {
             .then(res => {
                 if(res.message === 'blocks retrieved') {
                     latestPosition.current = latestPosition.current + res.blocks.length;
-                    console.log(2);
                     setBlockList(res.blocks);
                 }else {
                     console.log(res.error);
@@ -137,7 +137,7 @@ const Page = () => {
         .then(res => res.json())
         .then(res => {
             if(res.message === 'block created') {
-                    newBlockData.id = res.id;
+                newBlockData.id = res.id;
                 const updateBLockList = blockListRef.current;
                 updateBLockList.push(newBlockData);
                 setBlockList([...updateBLockList]);
@@ -199,7 +199,6 @@ const Page = () => {
             }
         }
         if(e.key === 'ArrowDown') {
-            console.log('Arrow Down');
             if(currentType.current === null) {
                 if(heading1Ref.current.nextSibling !== null){ 
                     currentType.current = heading1Ref.current.nextSibling;
@@ -265,7 +264,6 @@ const Page = () => {
             let newBlocksContainerArray = [...blockContainerList.current.slice(0, closestElementIndex), blockContainerList.current[draggingElementIndex], ...blockContainerList.current.slice( closestElementIndex, draggingElementIndex), ...blockContainerList.current.slice(draggingElementIndex + 1)];
 
             let newBlocksArray = [...blockListRef.current.slice(0, closestElementIndex), blockListRef.current[draggingElementIndex], ...blockListRef.current.slice( closestElementIndex, draggingElementIndex), ...blockListRef.current.slice(draggingElementIndex + 1)];
-
             blockContainerList.current = newBlocksContainerArray;
             setBlockList([...newBlocksArray]);
             blockListRef.current = newBlocksArray;
@@ -278,7 +276,6 @@ const Page = () => {
             <div ref={blocksContainerRef} className="blocks-container" onDragOver={dragOverHandler}>
                 {
                     blockList !== undefined  && blockList.map((block) => {
-                        //if(block !== undefined)
                         return <Block key={block.id} newBlockRef={newBlockRef} createBlock={createBlock} block={block}/>;
                     })        
                 }
