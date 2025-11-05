@@ -1,0 +1,317 @@
+version: '3.8'
+
+# Development Docker Compose
+# This file is used for local development
+# Includes all infrastructure (PostgreSQL, Redis, RabbitMQ)
+# Run with: docker-compose -f docker-compose.dev.yml up
+
+services:
+  # ==========================================================================
+  # INFRASTRUCTURE - PostgreSQL
+  # ==========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: puzzle-postgres-dev
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DEV_POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${DEV_POSTGRES_PASSWORD:-dev_password}
+      - POSTGRES_DB=${DEV_POSTGRES_DB:-postgres}
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d  # Auto-run migrations on first start
+    networks:
+      - puzzle-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================================================
+  # INFRASTRUCTURE - Redis
+  # ==========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: puzzle-redis-dev
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 100mb --maxmemory-policy allkeys-lru
+    networks:
+      - puzzle-dev-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================================================
+  # INFRASTRUCTURE - RabbitMQ
+  # ==========================================================================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: puzzle-rabbitmq-dev
+    ports:
+      - "5672:5672"    # AMQP protocol
+      - "15672:15672"  # Management UI: http://localhost:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${DEV_RABBITMQ_USER:-admin}
+      - RABBITMQ_DEFAULT_PASS=${DEV_RABBITMQ_PASSWORD:-admin}
+    volumes:
+      - rabbitmq_dev_data:/var/lib/rabbitmq
+    networks:
+      - puzzle-dev-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================================================
+  # FRONTEND - React Application
+  # ==========================================================================
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev  # Dev Dockerfile with hot reload
+      args:
+        - NODE_ENV=development
+    container_name: puzzle-web-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080/api
+      - CHOKIDAR_USEPOLLING=true  # For hot reload in Docker
+    volumes:
+      - ./web/src:/app/src  # Mount source for hot reload
+      - ./web/public:/app/public
+    networks:
+      - puzzle-dev-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # API GATEWAY - Request Router
+  # ==========================================================================
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile.dev
+    container_name: puzzle-api-gateway-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_key_change_in_production}
+      - AUTH_SERVICE_URL=http://auth-service:8001
+      - BLOCK_SERVICE_URL=http://block-service:8002
+      - BLOG_SERVICE_URL=http://blog-service:8003
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8004
+      - LOG_LEVEL=debug
+    volumes:
+      - ./services/api-gateway/src:/app/src  # Hot reload
+    networks:
+      - puzzle-dev-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      block-service:
+        condition: service_started
+      blog-service:
+        condition: service_started
+    restart: unless-stopped
+
+  # ==========================================================================
+  # AUTH SERVICE - User Authentication (Go)
+  # ==========================================================================
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile.dev
+    container_name: puzzle-auth-service-dev
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_auth_db
+      - DATABASE_USER=${DEV_POSTGRES_USER:-postgres}
+      - DATABASE_PASSWORD=${DEV_POSTGRES_PASSWORD:-dev_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_key_change_in_production}
+      - JWT_EXPIRY=24h
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
+      - OAUTH_CALLBACK_URL=http://localhost:3000/auth/callback
+      - LOG_LEVEL=debug
+    volumes:
+      - ./services/auth-service:/app  # Hot reload with Air (Go)
+    networks:
+      - puzzle-dev-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ==========================================================================
+  # BLOCK SERVICE - Block Management
+  # ==========================================================================
+  block-service:
+    build:
+      context: ./services/block-service
+      dockerfile: Dockerfile.dev
+    container_name: puzzle-block-service-dev
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - NODE_ENV=development
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_blocks_db
+      - DATABASE_USER=${DEV_POSTGRES_USER:-postgres}
+      - DATABASE_PASSWORD=${DEV_POSTGRES_PASSWORD:-dev_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_key_change_in_production}
+      - LOG_LEVEL=debug
+    volumes:
+      - ./services/block-service/src:/app/src  # Hot reload
+    networks:
+      - puzzle-dev-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ==========================================================================
+  # BLOG SERVICE - Public Blogs and Social Features
+  # ==========================================================================
+  blog-service:
+    build:
+      context: ./services/blog-service
+      dockerfile: Dockerfile.dev
+    container_name: puzzle-blog-service-dev
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - NODE_ENV=development
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_blog_db
+      - DATABASE_USER=${DEV_POSTGRES_USER:-postgres}
+      - DATABASE_PASSWORD=${DEV_POSTGRES_PASSWORD:-dev_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${DEV_RABBITMQ_USER:-admin}
+      - RABBITMQ_PASSWORD=${DEV_RABBITMQ_PASSWORD:-admin}
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_key_change_in_production}
+      - LOG_LEVEL=debug
+    volumes:
+      - ./services/blog-service/src:/app/src  # Hot reload
+    networks:
+      - puzzle-dev-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ==========================================================================
+  # NOTIFICATION SERVICE - Email and In-App Notifications
+  # ==========================================================================
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile.dev
+    container_name: puzzle-notification-service-dev
+    ports:
+      - "8004:8004"
+    environment:
+      - PORT=8004
+      - NODE_ENV=development
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_notifications_db
+      - DATABASE_USER=${DEV_POSTGRES_USER:-postgres}
+      - DATABASE_PASSWORD=${DEV_POSTGRES_PASSWORD:-dev_password}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${DEV_RABBITMQ_USER:-admin}
+      - RABBITMQ_PASSWORD=${DEV_RABBITMQ_PASSWORD:-admin}
+      - BREVO_API_KEY=${BREVO_API_KEY:-}
+      - BREVO_SENDER_EMAIL=noreply@puzzle.local
+      - BREVO_SENDER_NAME=Puzzle Dev
+      - FRONTEND_URL=http://localhost:3000
+      - LOG_LEVEL=debug
+    volumes:
+      - ./services/notification-service/src:/app/src  # Hot reload
+    networks:
+      - puzzle-dev-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  puzzle-dev-network:
+    driver: bridge
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  postgres_dev_data:
+  rabbitmq_dev_data:
+
+# =============================================================================
+# USAGE
+# =============================================================================
+# Start all services:
+#   docker-compose -f docker-compose.dev.yml up
+#
+# Start specific service:
+#   docker-compose -f docker-compose.dev.yml up postgres redis
+#
+# View logs:
+#   docker-compose -f docker-compose.dev.yml logs -f api-gateway
+#
+# Stop all:
+#   docker-compose -f docker-compose.dev.yml down
+#
+# Reset everything (delete data):
+#   docker-compose -f docker-compose.dev.yml down -v
+#
+# Access services:
+#   - Frontend: http://localhost:3000
+#   - API Gateway: http://localhost:8080
+#   - RabbitMQ UI: http://localhost:15672 (admin/admin)
+#   - PostgreSQL: localhost:5432 (postgres/dev_password)
+#   - Redis: localhost:6379

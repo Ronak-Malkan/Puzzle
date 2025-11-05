@@ -1,0 +1,212 @@
+version: '3.8'
+
+# Production Docker Compose
+# This file is used on Ronak-Verse droplet
+# Does NOT include PostgreSQL, Redis, RabbitMQ (shared infrastructure)
+# All services connect to external network: ronak-verse-network
+
+services:
+  # ==========================================================================
+  # FRONTEND - React Application
+  # ==========================================================================
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: puzzle-web
+    ports:
+      - "3000:80"  # Nginx serves on port 80 inside container
+    environment:
+      - REACT_APP_API_URL=https://puzzle.ronakverse.net/api
+    networks:
+      - ronak-verse-network
+    restart: unless-stopped
+    labels:
+      - "application=puzzle"
+      - "service=web"
+
+  # ==========================================================================
+  # API GATEWAY - Request Router
+  # ==========================================================================
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: puzzle-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=production
+      - REDIS_HOST=ronak-verse-redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
+      - AUTH_SERVICE_URL=http://puzzle-auth-service:8001
+      - BLOCK_SERVICE_URL=http://puzzle-block-service:8002
+      - BLOG_SERVICE_URL=http://puzzle-blog-service:8003
+      - NOTIFICATION_SERVICE_URL=http://puzzle-notification-service:8004
+      - LOG_LEVEL=info
+    networks:
+      - ronak-verse-network
+    depends_on:
+      - auth-service
+      - block-service
+      - blog-service
+      - notification-service
+    restart: unless-stopped
+    command: node --max-old-space-size=80 index.js
+    labels:
+      - "application=puzzle"
+      - "service=api-gateway"
+
+  # ==========================================================================
+  # AUTH SERVICE - User Authentication (Go)
+  # ==========================================================================
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: puzzle-auth-service
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - DATABASE_HOST=ronak-verse-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_auth_db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=ronak-verse-redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRY=24h
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - OAUTH_CALLBACK_URL=https://puzzle.ronakverse.net/api/auth/callback
+      - LOG_LEVEL=info
+    networks:
+      - ronak-verse-network
+    restart: unless-stopped
+    labels:
+      - "application=puzzle"
+      - "service=auth-service"
+
+  # ==========================================================================
+  # BLOCK SERVICE - Block Management
+  # ==========================================================================
+  block-service:
+    build:
+      context: ./services/block-service
+      dockerfile: Dockerfile
+    container_name: puzzle-block-service
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - NODE_ENV=production
+      - DATABASE_HOST=ronak-verse-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_blocks_db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=ronak-verse-redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
+      - LOG_LEVEL=info
+    networks:
+      - ronak-verse-network
+    restart: unless-stopped
+    command: node --max-old-space-size=120 index.js
+    labels:
+      - "application=puzzle"
+      - "service=block-service"
+
+  # ==========================================================================
+  # BLOG SERVICE - Public Blogs and Social Features
+  # ==========================================================================
+  blog-service:
+    build:
+      context: ./services/blog-service
+      dockerfile: Dockerfile
+    container_name: puzzle-blog-service
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - NODE_ENV=production
+      - DATABASE_HOST=ronak-verse-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_blog_db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=ronak-verse-redis
+      - REDIS_PORT=6379
+      - RABBITMQ_HOST=ronak-verse-rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - LOG_LEVEL=info
+    networks:
+      - ronak-verse-network
+    restart: unless-stopped
+    command: node --max-old-space-size=120 index.js
+    labels:
+      - "application=puzzle"
+      - "service=blog-service"
+
+  # ==========================================================================
+  # NOTIFICATION SERVICE - Email and In-App Notifications
+  # ==========================================================================
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: puzzle-notification-service
+    ports:
+      - "8004:8004"
+    environment:
+      - PORT=8004
+      - NODE_ENV=production
+      - DATABASE_HOST=ronak-verse-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=puzzle_notifications_db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - RABBITMQ_HOST=ronak-verse-rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - BREVO_API_KEY=${BREVO_API_KEY}
+      - BREVO_SENDER_EMAIL=noreply@puzzle.ronakverse.net
+      - BREVO_SENDER_NAME=Puzzle
+      - FRONTEND_URL=https://puzzle.ronakverse.net
+      - LOG_LEVEL=info
+    networks:
+      - ronak-verse-network
+    restart: unless-stopped
+    command: node --max-old-space-size=80 index.js
+    labels:
+      - "application=puzzle"
+      - "service=notification-service"
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  ronak-verse-network:
+    external: true  # Uses existing shared network
+
+# =============================================================================
+# NOTES
+# =============================================================================
+# - All services connect to ronak-verse-network (created externally)
+# - PostgreSQL, Redis, RabbitMQ run separately in Ronak-Verse infrastructure
+# - Environment variables loaded from .env file
+# - Memory limits set via Node.js --max-old-space-size flag
+# - All services auto-restart on failure
+# - Labels used by Prometheus/Loki for monitoring
