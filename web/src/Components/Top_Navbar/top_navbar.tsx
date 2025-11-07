@@ -3,6 +3,7 @@ import ArrowRight from "@utils/Double_Arrow_Right.svg?react";
 import ArrowLeft from "@utils/Double_Arrow_Left.svg?react";
 import Logout from "@utils/Logout.svg?react";
 import { useNavigate } from "react-router-dom";
+import DarkModeToggle from "@components/DarkModeToggle/dark_mode_toggle";
 import "./top_navbar.css";
 import { BlockContext } from "@context/block-context";
 
@@ -26,6 +27,7 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ showSideNavBar, setShow }) => {
             {!showSideNavBar && <span className="nav-bar-arrow" onClick={() => setShow(!showSideNavBar)}><ArrowRight/></span>}
             {showSideNavBar && <span className="nav-bar-arrow" onClick={() => setShow(!showSideNavBar)}><ArrowLeft/></span>}
             <h2 className="page-name">{selectedPageName}</h2>
+            <DarkModeToggle />
             <span className="logout" onClick={handleLogout}><Logout/></span>
         </div>
     )
