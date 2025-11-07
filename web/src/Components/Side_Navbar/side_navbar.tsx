@@ -1,22 +1,26 @@
-import { useContext, useEffect, useState } from "react";
-import { ReactComponent as Plus } from "../../Utils/Plus.svg";
-import { ReactComponent as Page } from "../../Utils/page.svg";
-import { ReactComponent as Delete } from "../../Utils/Delete.svg";
-import { ReactComponent as Settings } from "../../Utils/Settings.svg";
+import React, { useContext, useEffect, useState } from "react";
+import { ReactComponent as Plus } from "@utils/Plus.svg";
+import { ReactComponent as Page } from "@utils/page.svg";
+import { ReactComponent as Delete } from "@utils/Delete.svg";
+import { ReactComponent as Settings } from "@utils/Settings.svg";
+import type { Page as PageType } from "@/types";
+import { BLOCK_TYPES } from "@utils/block_types";
+import { BlockContext } from "@context/block-context";
 
 import "./side_navbar.css";
-import { BlockContext } from "../../context/block-context";
-import { BLOCK_TYPES } from "../../Utils/block_types";
 
+interface SideNavbarProps {
+    showSideNavBar: boolean;
+}
 
-const SideNavbar = ({showSideNavBar}) => {
-    const [name, setName] = useState('');
-    const [token, setToken] = useState('');
-    const {selectedPage, setPage, setPageName, pageList, setPageList} = useContext(BlockContext);
+const SideNavbar: React.FC<SideNavbarProps> = ({ showSideNavBar }) => {
+    const [name, setName] = useState<string>('');
+    const [token, setToken] = useState<string>('');
+    const { selectedPage, setPage, setPageName, pageList, setPageList } = useContext(BlockContext);
 
     useEffect(() => {
-        setName(localStorage.getItem('username'));
-        setToken(localStorage.getItem('token'));
+        setName(localStorage.getItem('username') || '');
+        setToken(localStorage.getItem('token') || '');
     }, []);
 
     useEffect(() => {
@@ -24,7 +28,7 @@ const SideNavbar = ({showSideNavBar}) => {
         // eslint-disable-next-line
     }, [token])
 
-    const fetchPageList = () => {
+    const fetchPageList = (): void => {
         if(token !== '') {
             fetch('api/block/pages', {
                 method: 'GET',
@@ -35,9 +39,9 @@ const SideNavbar = ({showSideNavBar}) => {
                 }
             })
             .then(res => res.json())
-            .then(res => {
+            .then((res: { message: string; pages?: PageType[]; error?: string }) => {
                 if(res.message === 'pages retrieved') {
-                    setPageList(res.pages);
+                    setPageList(res.pages || []);
                 }else {
                     console.log(res.error);
                 }
@@ -45,9 +49,9 @@ const SideNavbar = ({showSideNavBar}) => {
         }
     }
 
-    const addNewPage = () => {
+    const addNewPage = (): void => {
         if(token !== ''){
-            const pageData = {
+            const pageData: PageType = {
                 block_type: BLOCK_TYPES.PAGE,
                 position: 0,
                 parent: null,
@@ -55,8 +59,8 @@ const SideNavbar = ({showSideNavBar}) => {
                 children: false,
                 propertiesList: [
                     {
-                        "property_name": "title",
-                        "value": "Untitled"
+                        property_name: "title",
+                        value: "Untitled"
                     }
                 ]
             }
@@ -71,12 +75,11 @@ const SideNavbar = ({showSideNavBar}) => {
                 body: JSON.stringify(pageData)
             })
             .then(res => res.json())
-            .then(res => {
-                if(res.message === 'block created') {
-                    pageData.id = res.id;
-                    let pages = pageList;
-                    pages.push(pageData);
-                    setPageList([...pages]);
+            .then((res: { message: string; id?: string; error?: string }) => {
+                if(res.message === 'block created' && res.id) {
+                    const newPage: PageType = { ...pageData, id: res.id };
+                    const pages = [...pageList, newPage];
+                    setPageList(pages);
                 }else {
                     console.log(res.error);
                 }
@@ -84,7 +87,7 @@ const SideNavbar = ({showSideNavBar}) => {
         }
     }
 
-    const provideClassName = (pageId) => {
+    const provideClassName = (pageId: string): string => {
         if(pageId === selectedPage) {
             if(pageId === 'settingsSelected') return 'settings selected'
             return 'page-item selected';
@@ -95,26 +98,32 @@ const SideNavbar = ({showSideNavBar}) => {
         }
     }
 
-    const handlePageClick = (e) => {
-        if(e.target.dataset.pageid !== undefined){
-            setPage(e.target.dataset.pageid);
-            setPageName(e.target.dataset.title);
+    const handlePageClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+        const target = e.target as HTMLElement;
+        if(target.dataset.pageid !== undefined){
+            setPage(target.dataset.pageid);
+            setPageName(target.dataset.title || '');
         }
-        else {
-            setPage(e.target.parentNode.dataset.pageid);
-            setPageName(e.target.parentNode.dataset.title);
+        else if(target.parentNode && (target.parentNode as HTMLElement).dataset) {
+            const parentNode = target.parentNode as HTMLElement;
+            setPage(parentNode.dataset.pageid || '');
+            setPageName(parentNode.dataset.title || '');
         }
     }
 
-    const deletePage = (e) => {
+    const deletePage = (e: React.MouseEvent<SVGSVGElement>): void => {
         e.stopPropagation();
-        let pageId;
-        if(e.target.dataset.pageid !== undefined){
-            pageId = e.target.dataset.pageid;  
+        const target = e.target as HTMLElement;
+        let pageId: string | undefined;
+        if(target.dataset.pageid !== undefined){
+            pageId = target.dataset.pageid;
         }
-        else {
-            pageId = e.target.parentNode.dataset.pageid;
+        else if(target.parentNode && (target.parentNode as HTMLElement).dataset) {
+            pageId = (target.parentNode as HTMLElement).dataset.pageid;
         }
+
+        if(!pageId) return;
+
         fetch(`api/block/delete`, {
             method: 'DELETE',
             headers: {
@@ -125,20 +134,19 @@ const SideNavbar = ({showSideNavBar}) => {
             body: JSON.stringify({blockId: pageId})
         })
         .then(res => res.json())
-        .then(res => {
+        .then((res: { message: string; error?: string }) => {
             if(res.message === 'block deleted') {
                const updatedList = pageList.filter((page) => page.id !== pageId);
-               setPageList([...updatedList]);
+               setPageList(updatedList);
                setPage('');
                setPageName('');
             }else {
                 console.log(res.error);
             }
-        })  
-
+        })
     }
 
-    const openSettings = () => {
+    const openSettings = (): void => {
         setPage('settingsSelected');
         setPageName('Settings');
     }
@@ -156,12 +164,12 @@ const SideNavbar = ({showSideNavBar}) => {
                     </div>
                     <div className="page-list-container">
                         {pageList.map((page) =>{
-                            let title;
+                            let title: string = '';
                             for(let property of page.propertiesList){
                                 if(property.property_name === 'title') title = property.value;
                             }
                             return (
-                                <div onClick={handlePageClick} className={provideClassName(page.id)} key={page.id} data-title={title} data-pageid={`${page.id}`}>
+                                <div onClick={handlePageClick} className={provideClassName(page.id || '')} key={page.id} data-title={title} data-pageid={`${page.id}`}>
                                     <div className="pagelogo-id-container">
                                         <Page data-title={title} data-pageid={`${page.id}`}/>
                                         &nbsp;&nbsp;

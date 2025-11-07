@@ -1,17 +1,21 @@
-import { useContext } from "react";
-import { ReactComponent as ArrowRight } from "../../Utils/Double_Arrow_Right.svg";
-import { ReactComponent as ArrowLeft } from "../../Utils/Double_Arrow_Left.svg";
-import { ReactComponent as Logout } from "../../Utils/Logout.svg";
+import React, { useContext } from "react";
+import { ReactComponent as ArrowRight } from "@utils/Double_Arrow_Right.svg";
+import { ReactComponent as ArrowLeft } from "@utils/Double_Arrow_Left.svg";
+import { ReactComponent as Logout } from "@utils/Logout.svg";
 import { useNavigate } from "react-router-dom";
 import "./top_navbar.css";
-import { BlockContext } from "../../context/block-context";
+import { BlockContext } from "@context/block-context";
 
-const TopNavbar = ({showSideNavBar, setShow}) => {
+interface TopNavbarProps {
+    showSideNavBar: boolean;
+    setShow: (show: boolean) => void;
+}
 
-    const {selectedPageName} = useContext(BlockContext);
+const TopNavbar: React.FC<TopNavbarProps> = ({ showSideNavBar, setShow }) => {
+    const { selectedPageName } = useContext(BlockContext);
     const navigate = useNavigate();
 
-    const handleLogout = () => {
+    const handleLogout = (): void => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         navigate('/');

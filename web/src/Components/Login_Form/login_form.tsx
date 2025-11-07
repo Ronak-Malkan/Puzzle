@@ -1,16 +1,27 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./login_form.css";
 
-const Login_Form = ({setDisplay}) => {
+interface LoginFormProps {
+    setDisplay: (display: boolean) => void;
+}
 
-    const [message, setMessage] = useState();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+interface LoginResponse {
+    message: string;
+    token?: string;
+    firstname?: string;
+    lastname?: string;
+}
+
+const Login_Form: React.FC<LoginFormProps> = ({ setDisplay }) => {
+
+    const [message, setMessage] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
 
-    const loginHandler = (e) => {
+    const loginHandler = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         if(email === '' || password === '') {
             setMessage("Please fill all the fields.")
@@ -30,9 +41,9 @@ const Login_Form = ({setDisplay}) => {
             body: JSON.stringify(sendData)
          })
          .then(res => res.json())
-         .then(data => {
+         .then((data: LoginResponse) => {
             if(data.message === 'User logged in.') {
-                localStorage.setItem('token', data.token);
+                localStorage.setItem('token', data.token || '');
                 localStorage.setItem('username', `${data.firstname} ${data.lastname}`)
                 setTimeout(() => navigate("/home"), 500);
                 return;
@@ -47,11 +58,11 @@ const Login_Form = ({setDisplay}) => {
     <div className="form">
     <h2 className="login_title">Sign In</h2>
     <form>
-        <input className="login_inputs" type="email" placeholder="email" value={email} onChange={(event) => setEmail(event.target.value)}/><br/>
-        <input className="login_inputs" type="password" placeholder="password" value={password} onChange={(event) => setPassword(event.target.value)}/><br/>
+        <input className="login_inputs" type="email" placeholder="email" value={email} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}/><br/>
+        <input className="login_inputs" type="password" placeholder="password" value={password} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}/><br/>
         <button className="login_button" onClick={loginHandler}>Login</button>
     </form>
-    <p className="signup_prompt">don’t have an account? <span onClick={() => setDisplay(false)}>&nbsp;create one!</span></p>
+    <p className="signup_prompt">don't have an account? <span onClick={() => setDisplay(false)}>&nbsp;create one!</span></p>
     <p className="error_message">{message}</p>
   </div>
    );

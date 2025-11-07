@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import TopNavbar from "../../Components/Top_Navbar/top_navbar";
-import SideNavbar from "../../Components/Side_Navbar/side_navbar";
-import PageDisplay from "../../Components/Page_Display/page_display";
+import React, { useEffect, useState } from "react";
+import TopNavbar from "@components/Top_Navbar/top_navbar";
+import SideNavbar from "@components/Side_Navbar/side_navbar";
+import PageDisplay from "@components/Page_Display/page_display";
 import { useNavigate } from "react-router-dom";
-import { BlockContextProvider } from "../../context/block-context";
+import { BlockContextProvider } from "@context/block-context";
 
 import "./home.css";
 
-const Home = () => {
-   const [showSideNavBar, setShow] = useState(true);
-   const [className, setClassName] = useState();
+const Home: React.FC = () => {
+   const [showSideNavBar, setShow] = useState<boolean>(true);
+   const [className, setClassName] = useState<string>('home-container show-side-navbar');
    const navigate = useNavigate();
 
    useEffect(() => {
-      let token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       fetch('api/checkjwt', {
          method: 'POST',
          headers: {
@@ -23,7 +23,7 @@ const Home = () => {
          }
      })
      .then(res => res.json())
-     .then(res => {
+     .then((res: { message: string }) => {
          if(res.message === 'Authorized') {
              console.log('Authorized');
              return;
@@ -46,7 +46,7 @@ const Home = () => {
    return (
       <BlockContextProvider>
          <div className={className}>
-            <SideNavbar 
+            <SideNavbar
                showSideNavBar={showSideNavBar}
             />
             <TopNavbar showSideNavBar={showSideNavBar} setShow={setShow}/>

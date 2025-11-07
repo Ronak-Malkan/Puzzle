@@ -1,13 +1,12 @@
-import { useContext, useEffect } from "react";
-import Page from "../Page/page";
-import Settings from "../Settings/settings";
+import React, { useContext, useEffect } from "react";
+import Page from "@components/Page/page";
+import Settings from "@components/Settings/settings";
+import { BlockContext } from "@context/block-context";
 
 import "./page_display.css";
-import { BlockContext } from "../../context/block-context";
 
-const PageDisplay = () => {
-
-    const {selectedPage, pageBottom, pageRef} = useContext(BlockContext);
+const PageDisplay: React.FC = () => {
+    const { selectedPage, pageBottom, pageRef } = useContext(BlockContext);
 
     useEffect(() => {
         if(pageRef.current !== null){
@@ -16,7 +15,7 @@ const PageDisplay = () => {
         // eslint-disable-next-line
     }, [pageRef])
 
-    const display = () => {
+    const display = (): React.JSX.Element => {
         if(selectedPage !== '' && selectedPage !== 'settingsSelected'){
             return (<Page/>)
         }

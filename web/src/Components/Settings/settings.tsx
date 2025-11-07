@@ -1,37 +1,37 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import "./settings.css";
 
-const Settings = () => {
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const firstNameRef = useRef(null);
-    const lastNameRef = useRef(null);
-    const emailRef = useRef(null);
-    const passwordRef = useRef(null);
+const Settings: React.FC = () => {
+    const [firstname, setFirstname] = useState<string>('');
+    const [lastname, setLastname] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const firstNameRef = useRef<HTMLInputElement>(null);
+    const lastNameRef = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
 
-    const updateHandler = (e, target) => {
+    const updateHandler = (e: React.MouseEvent<HTMLButtonElement>, target: number): void => {
         e.preventDefault();
         if(target === 0) {
-            if(firstname === '') firstNameRef.current.focus();
+            if(firstname === '') firstNameRef.current?.focus();
             else {
 
             }
         }else if(target === 1) {
-            if(lastname === '') lastNameRef.current.focus();
+            if(lastname === '') lastNameRef.current?.focus();
             else {
-                
+
             }
         }else if(target === 2) {
-            if(email === '') emailRef.current.focus();
+            if(email === '') emailRef.current?.focus();
             else {
-                
+
             }
         }else if(target === 3) {
-            if(password === '') passwordRef.current.focus();
+            if(password === '') passwordRef.current?.focus();
             else {
-                
+
             }
         }
     }
