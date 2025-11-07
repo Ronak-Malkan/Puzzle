@@ -1,7 +1,7 @@
 # =============================================================================
 # Dockerfile for Puzzle React Frontend (Development)
 # =============================================================================
-# Uses react-scripts development server with hot reload
+# Uses Vite development server with hot module replacement
 # Mount source code as volumes for instant updates
 # =============================================================================
 
@@ -18,7 +18,7 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Expose development server port
+# Expose Vite development server port
 EXPOSE 3000
 
 # Set environment
@@ -32,5 +32,5 @@ ENV CHOKIDAR_USEPOLLING=true
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
 
-# Start development server
-CMD ["npm", "start"]
+# Start Vite development server
+CMD ["npm", "run", "dev"]

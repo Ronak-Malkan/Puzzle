@@ -3,7 +3,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Stage 1: Build React Application
+# Stage 1: Build Vite Application
 # -----------------------------------------------------------------------------
 FROM node:20-alpine AS builder
 
@@ -12,13 +12,13 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production --ignore-scripts
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
 
-# Build production bundle
+# Build production bundle with Vite
 ARG REACT_APP_API_URL=https://puzzle.ronakverse.net/api
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 ENV NODE_ENV=production
