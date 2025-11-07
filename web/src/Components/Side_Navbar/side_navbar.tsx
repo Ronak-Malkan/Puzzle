@@ -6,6 +6,7 @@ import Settings from "@utils/Settings.svg?react";
 import type { Page as PageType } from "@/types";
 import { BLOCK_TYPES } from "@utils/block_types";
 import { BlockContext } from "@context/block-context";
+import LoadingSkeleton from "@components/LoadingSkeleton/loading_skeleton";
 
 import "./side_navbar.css";
 
@@ -16,6 +17,7 @@ interface SideNavbarProps {
 const SideNavbar: React.FC<SideNavbarProps> = ({ showSideNavBar }) => {
     const [name, setName] = useState<string>('');
     const [token, setToken] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { selectedPage, setPage, setPageName, pageList, setPageList } = useContext(BlockContext);
 
     useEffect(() => {
@@ -30,6 +32,7 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ showSideNavBar }) => {
 
     const fetchPageList = (): void => {
         if(token !== '') {
+            setIsLoading(true);
             fetch('api/block/pages', {
                 method: 'GET',
                 headers: {
@@ -46,6 +49,7 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ showSideNavBar }) => {
                     console.log(res.error);
                 }
             })
+            .finally(() => setIsLoading(false));
         }
     }
 
@@ -163,26 +167,32 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ showSideNavBar }) => {
                         Add New Page
                     </div>
                     <div className="page-list-container">
-                        {pageList.map((page) =>{
-                            let title: string = '';
-                            for(let property of page.propertiesList){
-                                if(property.property_name === 'title') title = property.value;
-                            }
-                            return (
-                                <div onClick={handlePageClick} className={provideClassName(page.id || '')} key={page.id} data-title={title} data-pageid={`${page.id}`}>
-                                    <div className="pagelogo-id-container">
-                                        <Page data-title={title} data-pageid={`${page.id}`}/>
-                                        &nbsp;&nbsp;
-                                        <div data-title={title} data-pageid={`${page.id}`}>{title}</div>
-                                    </div>
-                                    <Delete onClick={deletePage} data-title={title} data-pageid={`${page.id}`} className="delete-icon" />
+                        {isLoading ? (
+                            <LoadingSkeleton variant="page-item" count={5} />
+                        ) : (
+                            <>
+                                {pageList.map((page) =>{
+                                    let title: string = '';
+                                    for(let property of page.propertiesList){
+                                        if(property.property_name === 'title') title = property.value;
+                                    }
+                                    return (
+                                        <div onClick={handlePageClick} className={provideClassName(page.id || '')} key={page.id} data-title={title} data-pageid={`${page.id}`}>
+                                            <div className="pagelogo-id-container">
+                                                <Page data-title={title} data-pageid={`${page.id}`}/>
+                                                &nbsp;&nbsp;
+                                                <div data-title={title} data-pageid={`${page.id}`}>{title}</div>
+                                            </div>
+                                            <Delete onClick={deletePage} data-title={title} data-pageid={`${page.id}`} className="delete-icon" />
+                                        </div>
+                                    );
+                                })}
+                                <div className={provideClassName('settingsSelected')} onClick={openSettings}>
+                                    <Settings/>&nbsp;
+                                    Settings
                                 </div>
-                            );
-                        })}
-                        <div className={provideClassName('settingsSelected')} onClick={openSettings}>
-                            <Settings/>&nbsp;
-                            Settings
-                        </div>
+                            </>
+                        )}
                     </div>
                 </div>
             }           
