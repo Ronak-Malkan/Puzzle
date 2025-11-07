@@ -5,7 +5,7 @@ import type React from 'react';
 import "./block.css";
 import { BlockContext } from "@context/block-context";
 import { BLOCK_TYPES, BlockType } from "@utils/block_types";
-import { ReactComponent as DragIcon } from "@utils/Drag.svg";
+import DragIcon from "@utils/Drag.svg?react";
 
 // Legacy API structure for blocks
 interface Property {

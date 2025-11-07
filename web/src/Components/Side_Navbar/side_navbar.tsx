@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ReactComponent as Plus } from "@utils/Plus.svg";
-import { ReactComponent as Page } from "@utils/page.svg";
-import { ReactComponent as Delete } from "@utils/Delete.svg";
-import { ReactComponent as Settings } from "@utils/Settings.svg";
+import Plus from "@utils/Plus.svg?react";
+import Page from "@utils/page.svg?react";
+import Delete from "@utils/Delete.svg?react";
+import Settings from "@utils/Settings.svg?react";
 import type { Page as PageType } from "@/types";
 import { BLOCK_TYPES } from "@utils/block_types";
 import { BlockContext } from "@context/block-context";

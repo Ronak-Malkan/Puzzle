@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import { ReactComponent as ArrowRight } from "@utils/Double_Arrow_Right.svg";
-import { ReactComponent as ArrowLeft } from "@utils/Double_Arrow_Left.svg";
-import { ReactComponent as Logout } from "@utils/Logout.svg";
+import ArrowRight from "@utils/Double_Arrow_Right.svg?react";
+import ArrowLeft from "@utils/Double_Arrow_Left.svg?react";
+import Logout from "@utils/Logout.svg?react";
 import { useNavigate } from "react-router-dom";
 import "./top_navbar.css";
 import { BlockContext } from "@context/block-context";
