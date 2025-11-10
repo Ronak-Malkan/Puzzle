@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -25,8 +26,9 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 	var input services.SignupInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Signup binding error: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Missing required fields: email, password, firstname, lastname",
+			"error": fmt.Sprintf("Invalid input: %v", err),
 		})
 		return
 	}
