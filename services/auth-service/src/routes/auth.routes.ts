@@ -6,14 +6,15 @@ import { logger } from '../utils/logger';
 const router = Router();
 
 // Signup endpoint
-router.post('/signup', async (req: Request, res: Response) => {
+router.post('/signup', async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password, firstname, lastname } = req.body;
 
     if (!email || !password || !firstname || !lastname) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Missing required fields: email, password, firstname, lastname',
       });
+      return;
     }
 
     const result = await AuthService.signup({
@@ -31,14 +32,15 @@ router.post('/signup', async (req: Request, res: Response) => {
 });
 
 // Login endpoint
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Missing required fields: email, password',
       });
+      return;
     }
 
     const result = await AuthService.login({ email, password });
@@ -51,10 +53,11 @@ router.post('/login', async (req: Request, res: Response) => {
 });
 
 // Get current user info (protected route)
-router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => {
+router.get('/me', authenticateToken, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
     }
 
     const userInfo = await AuthService.getUserInfo(req.user.id);
@@ -66,13 +69,14 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => 
 });
 
 // Verify token endpoint (used by API gateway)
-router.post('/verify', async (req: Request, res: Response) => {
+router.post('/verify', async (req: Request, res: Response): Promise<void> => {
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({ error: 'Token required' });
+      res.status(401).json({ error: 'Token required' });
+      return;
     }
 
     const { verifyToken } = await import('../utils/jwt');

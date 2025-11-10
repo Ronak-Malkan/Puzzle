@@ -4,7 +4,7 @@ import redisClient from '../config/redis';
 
 const router = Router();
 
-router.get('/health', async (req: Request, res: Response) => {
+router.get('/health', async (_req: Request, res: Response) => {
   const health = {
     service: 'auth-service',
     status: 'up',
@@ -35,7 +35,7 @@ router.get('/health', async (req: Request, res: Response) => {
   res.status(statusCode).json(health);
 });
 
-router.get('/ready', async (req: Request, res: Response) => {
+router.get('/ready', async (_req: Request, res: Response) => {
   try {
     await pool.query('SELECT 1');
     await redisClient.ping();
