@@ -7,6 +7,10 @@ export enum BlockType {
   UL = 'ul',
   CHECKLIST = 'checklist',
   TABLE = 'table',
+  TABLE_HEADER_ROW = 'table_header_row',
+  TABLE_ROW = 'table_row',
+  TABLE_HEADER_CELL = 'table_header_cell',
+  TABLE_CELL = 'table_cell',
 }
 
 export interface Property {
